@@ -1,0 +1,12 @@
+class class_name
+{
+public:
+class_name();
+void method_1(char* name_char, unsigned int int_name);
+int method_2();
+private:
+void method_3();
+char* a1;
+char a2[33];
+int b2;
+};

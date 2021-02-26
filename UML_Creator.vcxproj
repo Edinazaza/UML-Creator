@@ -101,6 +101,8 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies />
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>main</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -121,12 +123,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConvertFunction.cpp" />
+    <ClCompile Include="FileWork.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ResultForm.cpp" />
     <ClCompile Include="StartForm.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConvertFunction.h" />
+    <ClInclude Include="FileWork.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResultForm.h">
       <FileType>CppForm</FileType>

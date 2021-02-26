@@ -1,5 +1,8 @@
 #pragma once
-
+#include "FileWork.h"
+#include "ConvertFunction.h"
+#include <string>
+#include <iostream>
 namespace UMLCreator {
 
 	using namespace System;
@@ -21,6 +24,7 @@ namespace UMLCreator {
 			//
 			//TODO: добавьте код конструктора
 			//
+
 		}
 
 	protected:
@@ -77,6 +81,16 @@ namespace UMLCreator {
 			this->RedactorResultForm->Name = L"RedactorResultForm";
 			this->RedactorResultForm->Size = System::Drawing::Size(345, 447);
 			this->RedactorResultForm->TabIndex = 1;
+			this->RedactorResultForm->TextChanged += gcnew System::EventHandler(this, &ResultForm::RedactorResultForm_TextChanged);
+
+			std::ifstream ifs("ParseClass.txt");
+			std::string s;
+			this->RedactorResultForm->Text = L"";
+			while (std::getline(ifs, s)) {
+				this->RedactorResultForm->Text += Convert_string_to_String(s) + System::Environment::NewLine;
+			}
+			ifs.close();
+
 			// 
 			// DownloadResultForm
 			// 
@@ -129,5 +143,6 @@ namespace UMLCreator {
 		}
 #pragma endregion
 	private: System::Void BackResultForm_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void RedactorResultForm_TextChanged(System::Object^ sender, System::EventArgs^ e);
 };
 }
