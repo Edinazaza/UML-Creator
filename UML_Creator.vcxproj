@@ -131,6 +131,7 @@
   <ItemGroup>
     <ClInclude Include="ConvertFunction.h" />
     <ClInclude Include="FileWork.h" />
+    <ClInclude Include="Parser.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResultForm.h">
       <FileType>CppForm</FileType>

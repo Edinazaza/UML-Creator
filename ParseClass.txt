@@ -1,12 +1,13 @@
-class class_name
-{
-public:
-class_name();
-void method_1(char* name_char, unsigned int int_name);
-int method_2();
-private:
-void method_3();
-char* a1;
-char a2[33];
-int b2;
-};
+class name: class_name
+
+variables:
++ a1: char[1..*]
++ a2: char[1..33]
++ b2: int
+
+methods:
++ method_2(in method_3(: void): int
+constructors:
++ class_name(in method_1(cha: void[1..*], in int_name: unsigned int)
+
+
