@@ -54,6 +54,7 @@ namespace UMLCreator {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(StartForm::typeid));
 			this->ClassTextStartForm = (gcnew System::Windows::Forms::TextBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->YourselfStartForm = (gcnew System::Windows::Forms::Button());
@@ -104,11 +105,11 @@ namespace UMLCreator {
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(175, 499);
+			this->label2->Location = System::Drawing::Point(166, 499);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(106, 13);
+			this->label2->Size = System::Drawing::Size(138, 13);
 			this->label2->TabIndex = 4;
-			this->label2->Text = L"B.Firtych and N.Krois";
+			this->label2->Text = L"B.Firtych and N.Krois \"Isus\"";
 			// 
 			// StartForm
 			// 
@@ -120,6 +121,7 @@ namespace UMLCreator {
 			this->Controls->Add(this->YourselfStartForm);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->ClassTextStartForm);
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->MaximizeBox = false;
 			this->MaximumSize = System::Drawing::Size(475, 560);
 			this->MinimumSize = System::Drawing::Size(475, 560);

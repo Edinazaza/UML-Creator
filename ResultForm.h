@@ -40,6 +40,8 @@ namespace UMLCreator {
 			{
 				delete components;
 			}
+			delete this->PictureResultForm->Image;
+
 		}
 	private: System::Windows::Forms::PictureBox^ PictureResultForm;
 	protected:
@@ -61,6 +63,7 @@ namespace UMLCreator {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(ResultForm::typeid));
 			this->PictureResultForm = (gcnew System::Windows::Forms::PictureBox());
 			this->RedactorResultForm = (gcnew System::Windows::Forms::TextBox());
 			this->DownloadResultForm = (gcnew System::Windows::Forms::Button());
@@ -76,6 +79,9 @@ namespace UMLCreator {
 			this->PictureResultForm->Size = System::Drawing::Size(353, 448);
 			this->PictureResultForm->TabIndex = 0;
 			this->PictureResultForm->TabStop = false;
+			this->PictureResultForm->Click += gcnew System::EventHandler(this, &ResultForm::PictureResultForm_Click);
+			Bitmap^ img = gcnew Bitmap("output.jpg");
+			this->PictureResultForm->Image = img;
 			// 
 			// RedactorResultForm
 			// 
@@ -85,7 +91,6 @@ namespace UMLCreator {
 			this->RedactorResultForm->Size = System::Drawing::Size(345, 447);
 			this->RedactorResultForm->TabIndex = 1;
 			this->RedactorResultForm->TextChanged += gcnew System::EventHandler(this, &ResultForm::RedactorResultForm_TextChanged);
-			
 			std::ifstream ifs("ParseClass.txt");
 			std::string s;
 			this->RedactorResultForm->Text = L"";
@@ -93,7 +98,7 @@ namespace UMLCreator {
 				this->RedactorResultForm->Text += Convert_string_to_String(s) + System::Environment::NewLine;
 			}
 			ifs.close();
-			
+
 			// 
 			// DownloadResultForm
 			// 
@@ -103,6 +108,7 @@ namespace UMLCreator {
 			this->DownloadResultForm->TabIndex = 2;
 			this->DownloadResultForm->Text = L"DOWNLOAD";
 			this->DownloadResultForm->UseVisualStyleBackColor = true;
+			this->DownloadResultForm->Click += gcnew System::EventHandler(this, &ResultForm::DownloadResultForm_Click_1);
 			// 
 			// ChangeResultForm
 			// 
@@ -134,6 +140,7 @@ namespace UMLCreator {
 			this->Controls->Add(this->DownloadResultForm);
 			this->Controls->Add(this->RedactorResultForm);
 			this->Controls->Add(this->PictureResultForm);
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
 			this->MaximizeBox = false;
 			this->MaximumSize = System::Drawing::Size(789, 558);
 			this->MinimumSize = System::Drawing::Size(789, 558);
@@ -149,5 +156,7 @@ namespace UMLCreator {
 	private: System::Void BackResultForm_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void RedactorResultForm_TextChanged(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void ChangeResultForm_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void PictureResultForm_Click(System::Object^ sender, System::EventArgs^ e);
+private: System::Void DownloadResultForm_Click_1(System::Object^ sender, System::EventArgs^ e);
 };
 }

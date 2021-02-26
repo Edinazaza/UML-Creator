@@ -8,6 +8,7 @@
 #include "ConvertFunction.h"
 #include "standart_class.h"
 #include "FileWork.h"
+#include "CreateImageSFML.h"
 
 System::Void UMLCreator::StartForm::YourselfStartForm_Click(System::Object^ sender, System::EventArgs^ e)
 {
@@ -16,6 +17,9 @@ System::Void UMLCreator::StartForm::YourselfStartForm_Click(System::Object^ send
 	DataCollector DC_PARSER;
 	DC_PARSER.Parse("ClassRead.txt");
 	DC_PARSER.output("ParseClass.txt");
+
+	ParserUmlAndChangeImage();
+
 	ResultForm^ form = gcnew ResultForm();
 	this->Hide();
 	form->Show();
@@ -30,6 +34,8 @@ System::Void UMLCreator::StartForm::CreateStartForm_Click(System::Object^ sender
 	DataCollector DC_PARSER;
 	DC_PARSER.Parse("ClassRead.txt");
 	DC_PARSER.output("ParseClass.txt");
+
+	ParserUmlAndChangeImage();
 
 	ResultForm^ form = gcnew ResultForm();
 	this->Hide();

@@ -29,11 +29,11 @@ std::vector<std::string> ParserUML::getVariables(const std::string& filename)
 	auto teg = need_data.find('\n');
 	while (teg != std::string::npos)
 	{
-		if (need_data.substr(0, teg).size() > 2) {
+		if (need_data.substr(0, teg).size() > 4) {
 			variables_.push_back(need_data.substr(0, teg));
-			need_data.erase(0, teg + 1);
-			teg = need_data.find('\n');
 		}
+		need_data.erase(0, teg + 1);
+		teg = need_data.find('\n');
 	}
 	return variables_;
 }
@@ -46,11 +46,11 @@ std::vector<std::string> ParserUML::getMethod(const std::string& filename)
 	auto teg = need_data.find('\n');
 	while (teg != std::string::npos)
 	{
-		if (need_data.substr(0, teg).size() > 2) {
+		if (need_data.substr(0, teg).size() > 4) {
 			methods_.push_back(need_data.substr(0, teg));
-			need_data.erase(0, teg + 1);
-			teg = need_data.find('\n');
 		}
+		need_data.erase(0, teg + 1);
+		teg = need_data.find('\n');
 	}
 	return methods_;
 }
