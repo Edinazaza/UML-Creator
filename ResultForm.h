@@ -85,7 +85,7 @@ namespace UMLCreator {
 			this->RedactorResultForm->Size = System::Drawing::Size(345, 447);
 			this->RedactorResultForm->TabIndex = 1;
 			this->RedactorResultForm->TextChanged += gcnew System::EventHandler(this, &ResultForm::RedactorResultForm_TextChanged);
-
+			
 			std::ifstream ifs("ParseClass.txt");
 			std::string s;
 			this->RedactorResultForm->Text = L"";
@@ -93,7 +93,7 @@ namespace UMLCreator {
 				this->RedactorResultForm->Text += Convert_string_to_String(s) + System::Environment::NewLine;
 			}
 			ifs.close();
-
+			
 			// 
 			// DownloadResultForm
 			// 
@@ -112,6 +112,7 @@ namespace UMLCreator {
 			this->ChangeResultForm->TabIndex = 3;
 			this->ChangeResultForm->Text = L"CHANGE";
 			this->ChangeResultForm->UseVisualStyleBackColor = true;
+			this->ChangeResultForm->Click += gcnew System::EventHandler(this, &ResultForm::ChangeResultForm_Click);
 			// 
 			// BackResultForm
 			// 
@@ -147,5 +148,6 @@ namespace UMLCreator {
 #pragma endregion
 	private: System::Void BackResultForm_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void RedactorResultForm_TextChanged(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void ChangeResultForm_Click(System::Object^ sender, System::EventArgs^ e);
 };
 }
