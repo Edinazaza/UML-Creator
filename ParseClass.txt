@@ -1,13 +1,14 @@
-class name: class_name
-
-variables:
-+ a1: char[1..*]
-+ a2: char[1..33]
-+ b2: int
-
-methods:
-+ method_2(in method_3(: void): int
-constructors:
-+ class_name(in method_1(cha: void[1..*], in int_name: unsigned int)
-
-
+<name>
+class_name
+</name>
+<variables>
+- a1: char[1..*]
+- a2: char[1..33]
+- b2: int
+</variables>
+<methods>
++ method_1(in name_char: char[1..*], in int_name: unsigned int): void
++ method_2(): int
+- method_3(): void
++ class_name()
+</methods>

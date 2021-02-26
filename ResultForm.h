@@ -3,6 +3,7 @@
 #include "ConvertFunction.h"
 
 #include <string>
+#include <fstream>
 #include <iostream>
 
 namespace UMLCreator {

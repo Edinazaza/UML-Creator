@@ -101,7 +101,7 @@ public:
 					std::pair<std::string, std::string> t_n_p = { type, str };
 					n_t var_map;
 
-					if (sep.second == ")")
+					if (sep.second == ")" || sep.second == ");")
 					{
 						methods.push_back({ { t_n_p, curr_section }, var_map });
 						continue;
@@ -120,11 +120,13 @@ public:
 							methods.push_back({ { t_n_p, curr_section }, std::move(var_map) });
 							continue;
 						}
+						clean_from_symb(str, ',');
 						var_map.push_back({ str, sep.second });
 					}
 					parse_method(source, var_map);
 					methods.push_back({ { t_n_p, curr_section }, std::move(var_map) });
 				}
+				continue;
 			}
 			auto sep = separate(str);
 			if (str == class_name)
@@ -133,6 +135,11 @@ public:
 				bool is_template = clean_template_type(source, sep.second);
 
 				constructor.first = curr_section;
+				if (sep.second == ")" || sep.second == ");")
+				{
+					constructors.push_back(constructor);
+					continue;
+				}
 				if (sep.first && types.find(sep.second) != types.end() || is_template)
 				{
 					source >> str;
@@ -159,12 +166,12 @@ public:
 	{
 		std::ofstream stream(filepath);
 
-		(filepath == "nofile.txt" ? std::cout : stream) << "class name: " << class_name << "\n\nvariables:";
+		(filepath == "nofile.txt" ? std::cout : stream) << (filepath == "nofile.txt" ? "class_name: " : "<name>\n") << class_name << (filepath == "nofile.txt" ? "\n\nvariables: " : "\n</name>\n<variables>");
 		for (const auto& item : variables)
 		{
 			(filepath == "nofile.txt" ? std::cout : stream) << '\n' << sections_to_chars(item.second) << " " << item.first.first << ": " << item.first.second;
 		}
-		(filepath == "nofile.txt" ? std::cout : stream) << "\n\nmethods:";
+		(filepath == "nofile.txt" ? std::cout : stream) << (filepath == "nofile.txt" ? "\n\nmethods: " : "\n</variables>\n<methods>");
 		bool first = true;
 		for (const auto& item : methods)
 		{
@@ -179,7 +186,7 @@ public:
 			}
 			(filepath == "nofile.txt" ? std::cout : stream) << ')' << ": " << item.first.first.first;
 		}
-		(filepath == "nofile.txt" ? std::cout : stream) << "\nconstructors:\n";
+		(filepath == "nofile.txt" ? std::cout : stream) << (filepath == "nofile.txt" ? "\n\nconstructor:\n" : "\n");
 		first = true;
 		for (const auto& item : constructors) {
 			(filepath == "nofile.txt" ? std::cout : stream) << sections_to_chars(item.first) << " " << class_name << '(';
@@ -193,7 +200,7 @@ public:
 			}
 			(filepath == "nofile.txt" ? std::cout : stream) << ')' << '\n';
 		}
-		(filepath == "nofile.txt" ? std::cout : stream) << "\n\n";
+		(filepath == "nofile.txt" ? std::cout : stream) << (filepath == "nofile.txt" ? "\n\n" : "</methods>");
 	}
 
 private:
@@ -227,7 +234,7 @@ private:
 
 	char sections_to_chars(const std::string& section) const
 	{
-		char ret;
+		char ret = '+';
 		if (section == "public:") { ret = '+'; }
 		else if (section == "private:") { ret = '-'; }
 		else if (section == "protected:") { ret = '#'; }
