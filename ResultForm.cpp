@@ -40,5 +40,5 @@ System::Void UMLCreator::ResultForm::PictureResultForm_Click(System::Object^ sen
 
 System::Void UMLCreator::ResultForm::DownloadResultForm_Click_1(System::Object^ sender, System::EventArgs^ e)
 {
-	MessageBox::Show("You Diagram in file output.jpg! Pls donate for developer!", "Download", MessageBoxButtons::OK);
+	MessageBox::Show("You Diagram in file output.jpg!", "Download", MessageBoxButtons::OK);
 }

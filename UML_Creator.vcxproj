@@ -130,6 +130,7 @@
     <ClCompile Include="CreateImageSFML.cpp" />
     <ClCompile Include="FileWork.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Parser.cpp" />
     <ClCompile Include="ResultForm.cpp" />
     <ClCompile Include="StartForm.cpp" />
     <ClCompile Include="UMLParser.cpp" />
@@ -158,7 +159,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="UML_Creator.rc" />
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="20470.ttf" />

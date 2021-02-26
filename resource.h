@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Включаемый файл, созданный в Microsoft Visual C++.
-// Используется UML_Creator.rc
+// Используется Resource.rc
 //
 #define IDR_FONTS1                      101
 

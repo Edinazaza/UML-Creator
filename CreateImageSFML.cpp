@@ -1,10 +1,11 @@
 #include <SFML/Graphics.hpp>
+
 #include "CreateImageSFML.h"
 #include "UMLParser.h"
 #include "StartForm.h"
 #include "resource.h"
-
 #include <windows.h>
+
 
 sf::Font LoadFontFromResource(const int ID)
 {
@@ -53,7 +54,6 @@ void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, st
 
 	sf::Text txt;
 	sf::Font font = LoadFontFromResource(IDR_FONTS1);
-	font.loadFromFile("20470.ttf");
 	txt.setFont(font);
 	txt.setFillColor(sf::Color::Black);
 
