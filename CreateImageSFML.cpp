@@ -32,7 +32,7 @@ sf::Font LoadFontFromResource(const int ID)
 	return font;
 }
 
-void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::string name)
+void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::string name, std::string FilePath)
 {
 	unsigned int width = 252;
 	for (std::string& i : meth)
@@ -105,12 +105,12 @@ void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, st
 
 	auto capturedTexture = renderTexture.getTexture().copyToImage();
 
-	if (!capturedTexture.saveToFile("output.jpg")) {}
+	if (!capturedTexture.saveToFile(FilePath)) {}
 }
 
-void ParserUmlAndChangeImage()
+void ParserUmlAndChangeImage(std::string FilePath)
 {
 	std::string filename = "ParseClass.txt";
 	ParserUML pUML;
-	CreateImage(pUML.getMethod(filename), pUML.getVariables(filename), pUML.getClassName(filename));
+	CreateImage(pUML.getMethod(filename), pUML.getVariables(filename), pUML.getClassName(filename), FilePath);
 }

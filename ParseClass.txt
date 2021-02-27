@@ -13,4 +13,5 @@ int_name: unsigned int): void
 - method_3(): void
 
 + class_name()
++ ~class_name()
 </methods>

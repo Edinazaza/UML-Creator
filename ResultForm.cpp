@@ -40,5 +40,15 @@ System::Void UMLCreator::ResultForm::PictureResultForm_Click(System::Object^ sen
 
 System::Void UMLCreator::ResultForm::DownloadResultForm_Click_1(System::Object^ sender, System::EventArgs^ e)
 {
-	MessageBox::Show("You Diagram in file output.jpg!", "Download", MessageBoxButtons::OK);
+	SaveFileDialog^ downloadImage = gcnew SaveFileDialog();
+	downloadImage->DefaultExt = ".jpg";
+	downloadImage->FileName = "out.jpg";
+	if (downloadImage->ShowDialog() != System::Windows::Forms::DialogResult::OK) {
+		return;
+	}
+	//std::string filename;
+	//Convert_String_to_string(downloadImage->FileName->ToString(), filename);
+	this->PictureResultForm->Image->Save(downloadImage->FileName->ToString());
+
+	MessageBox::Show(downloadImage->FileName->ToString(), "Download", MessageBoxButtons::OK);
 }

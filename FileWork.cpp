@@ -1,4 +1,5 @@
 #include "FileWork.h"
+#include <windows.h>
 
 void WriteInFile(const std::string& filename, const std::string& text_for_file)
 {

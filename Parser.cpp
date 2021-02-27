@@ -204,6 +204,8 @@ void DataCollector::output(const std::string& filepath)
 		(filepath == "nofile.txt" ? std::cout : stream) << constructor << '\n';
 
 	}
+	(filepath == "nofile.txt" ? std::cout : stream) << "+ ~" << class_name << "()" << '\n';
+
 	(filepath == "nofile.txt" ? std::cout : stream) << (filepath == "nofile.txt" ? "\n\n" : "</methods>");
 }
 
@@ -237,6 +239,7 @@ std::pair<bool, std::string> DataCollector::separate(std::string& source)
 
 void DataCollector::insert_newline_symb(std::string& source, size_t size)
 {
+	size_t size_safe = size;
 	while (source.size() > size)
 	{
 		size_t space = size;
@@ -246,7 +249,7 @@ void DataCollector::insert_newline_symb(std::string& source, size_t size)
 		}
 		source.insert(source.begin() + space, '\n');
 		source.erase(source.begin() + space + 1);
-		size += size;
+		size += size_safe;
 	}
 }
 
