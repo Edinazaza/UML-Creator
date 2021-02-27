@@ -5,6 +5,7 @@
 #include "StartForm.h"
 #include "resource.h"
 #include <windows.h>
+#include "Parser.h"
 
 
 sf::Font LoadFontFromResource(const int ID)
@@ -59,7 +60,7 @@ void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, st
 
 	// class name
 	txt.setCharacterSize(16);
-	txt.setStyle(sf::Text::Bold);
+	txt.setStyle(sf::Text::Regular);
 	txt.setString(name);
 	txt.move(sf::Vector2f(width / 2.5, 7));
 	renderTexture.draw(txt);
@@ -110,7 +111,7 @@ void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, st
 
 void ParserUmlAndChangeImage(std::string FilePath)
 {
-	std::string filename = "ParseClass.txt";
+	std::string filename = get_data_dir() + "\\ParseClass.txt";
 	ParserUML pUML;
 	CreateImage(pUML.getMethod(filename), pUML.getVariables(filename), pUML.getClassName(filename), FilePath);
 }

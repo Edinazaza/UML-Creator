@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include "Parser.h"
 
 namespace UMLCreator {
 
@@ -80,7 +81,7 @@ namespace UMLCreator {
 			this->PictureResultForm->TabIndex = 0;
 			this->PictureResultForm->TabStop = false;
 			this->PictureResultForm->Click += gcnew System::EventHandler(this, &ResultForm::PictureResultForm_Click);
-			Bitmap^ img = gcnew Bitmap("output.jpg");
+			Bitmap^ img = gcnew Bitmap(Convert_string_to_String(get_data_dir() + "\\output.jpg"));
 			this->PictureResultForm->Image = img;
 			// 
 			// RedactorResultForm
@@ -91,7 +92,7 @@ namespace UMLCreator {
 			this->RedactorResultForm->Size = System::Drawing::Size(345, 447);
 			this->RedactorResultForm->TabIndex = 1;
 			this->RedactorResultForm->TextChanged += gcnew System::EventHandler(this, &ResultForm::RedactorResultForm_TextChanged);
-			std::ifstream ifs("ParseClass.txt");
+			std::ifstream ifs(get_data_dir() + "\\ParseClass.txt");
 			std::string s;
 			this->RedactorResultForm->Text = L"";
 			while (std::getline(ifs, s)) {

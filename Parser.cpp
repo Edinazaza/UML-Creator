@@ -1,4 +1,5 @@
 #include "Parser.h"
+#include <windows.h>
 
 void DataCollector::Parse(std::string filepath)
 {
@@ -45,7 +46,9 @@ void DataCollector::Parse(std::string filepath)
 					clean_array_type(str, type);
 					variables.push_back({ { str, type }, curr_section });
 				}
-				else if (str[str.size() - 1] == ',')
+				peek_char(source, str, ',');
+
+				if (str[str.size() - 1] == ',')
 				{
 					size_t is_arr = type.find('[');
 					bool last = false;
@@ -55,7 +58,8 @@ void DataCollector::Parse(std::string filepath)
 						is_arr = type.find('[');
 						if (str.find(';') != std::string::npos)
 							last = true;
-						if (str[str.size() - 1] == ',' || str[str.size() - 1] == ';') { str.erase(str.size() - 1); }
+						clean_from_symb(str, ',');
+						clean_from_symb(str, ';');
 
 						if (is_arr != std::string::npos && str.find('*') == std::string::npos && !first)
 						{
@@ -79,6 +83,8 @@ void DataCollector::Parse(std::string filepath)
 						if (last)
 							break;
 						source >> str;
+						if (str == ",") { source >> str; }
+						clean_from_symb(str, ',');
 						if (str == "*")
 						{
 							source >> str;
@@ -141,7 +147,7 @@ void DataCollector::Parse(std::string filepath)
 					sep.second += str;
 					source >> str;
 				}
-
+				peek_char(source, str, ',');
 				if (str[str.size() - 2] == ')' && str[str.size() - 1] == ';')
 				{
 					clean_from_symb(str, ')');
@@ -161,10 +167,14 @@ void DataCollector::Parse(std::string filepath)
 	}
 }
 
-void DataCollector::output(const std::string& filepath)
+void DataCollector::output(std::string filepath)
 {
+	if (filepath == "nofile.txt")
+	{
+		filepath = data_directory + "\\output.txt";
+	}
 	std::ofstream stream(filepath);
-
+	create_dir(*this);
 	(filepath == "nofile.txt" ? std::cout : stream) << (filepath == "nofile.txt" ? "class_name: " : "<name>\n") << class_name << (filepath == "nofile.txt" ? "\n\nvariables: " : "\n</name>\n<variables>");
 	for (const auto& item : variables)
 	{
@@ -208,17 +218,6 @@ void DataCollector::output(const std::string& filepath)
 
 	(filepath == "nofile.txt" ? std::cout : stream) << (filepath == "nofile.txt" ? "\n\n" : "</methods>");
 }
-
-const std::set<std::string> types = { "int", "void", "string", "char", "bool", "char*",
-							"size_t", "unsigned", "long", "double", "short", "string", "float",
-	"int*", "unsigned*" };
-std::string class_name;
-//{{name(var), type(var)}, section}
-n_t_s variables;
-//{{{type(method), name(method)}, section}, {{name(var), type(var)}}}
-std::vector<std::pair<std::pair<std::pair<std::string, std::string>, std::string>, n_t>> methods;
-std::vector<std::pair<std::string, n_t>> constructors;
-std::string curr_section;
 
 std::pair<bool, std::string> DataCollector::separate(std::string& source)
 {
@@ -269,6 +268,8 @@ void DataCollector::parse_method(std::ifstream& source, n_t& var_map)
 	while (str.find(')') == std::string::npos && source)
 	{
 		source >> str;
+		if (str == ",") { source >> str; }
+		if (str[0] == ',') { clean_from_symb(str, ','); }
 		clean_template_type(source, str);
 		bool is_type = clean_array_type(str, type);
 		if (types.find(str) != types.end() || is_type)
@@ -285,13 +286,13 @@ void DataCollector::parse_method(std::ifstream& source, n_t& var_map)
 				var_map.push_back({ str, type });
 				break;
 			}
-			else if (str[str.size() - 2] == ')' && str[str.size() - 1] == ';')
+			else if (str.size() > 1 && str[str.size() - 2] == ')' && str[str.size() - 1] == ';')
 			{
 				str.erase(str.size() - 2);
 				var_map.push_back({ str, type });
 				break;
 			}
-			str.erase(str.size() - 1);
+			clean_from_symb(str, ',');
 			var_map.push_back({ str, type });
 		}
 	}
@@ -422,10 +423,80 @@ void DataCollector::read_data_type(std::ifstream& source, std::string& type, std
 	}
 }
 
+std::string create_dir(DataCollector& dc)
+{
+	static std::string dir;
+	if (dc.get_dir() == "empty") {
+		LPWSTR data = new WCHAR[500];
+		GetSystemDirectory(data, 500);
+		std::string sys_disc = "";
+		sys_disc += char(data[0]);
+		sys_disc += char(data[1]);
+		sys_disc += "\\UML_Creator";
+		dc.set_dir(sys_disc);
+		if (!std::filesystem::exists(sys_disc)) { std::filesystem::create_directory(sys_disc); }
+		dir = sys_disc;
+	}
+	else if (dc.get_dir() != "empty" && !std::filesystem::exists(dc.get_dir()))
+	{
+		std::filesystem::create_directory(dc.get_dir());
+	}
+	return dir;
+}
+
+void DataCollector::add_custom_class(std::string source)
+{
+	create_dir(*this);
+	std::ofstream stream(data_directory + "\\cc.dtt", std::ios_base::app);
+	stream << " " << source;
+}
+
+void DataCollector::read_custom_class()
+{
+	if (std::filesystem::exists(data_directory + "\\cc.dtt")) {
+		std::ifstream stream(data_directory + "\\cc.dtt");
+		std::string type;
+		while (stream)
+		{
+			stream >> type;
+			types.insert(type);
+		}
+	}
+}
+
 void DataCollector::catch_section(const std::string& str)
 {
 	if (str == "public:" || str == "private:" || str == "protected:")
 	{
 		curr_section = str;
 	}
+}
+
+void DataCollector::peek_char(std::ifstream& source, std::string& str, char c)
+{
+	char peek_res = ' ';
+	bool pure_coma = false;
+	while (peek_res == ' ')
+	{
+		peek_res = source.peek();
+		if (peek_res == c)
+		{
+			str += c;
+		}
+		else if (peek_res == ' ')
+		{
+			source.ignore(1);
+		}
+	}
+}
+
+std::string get_data_dir()
+{
+	LPWSTR data = new WCHAR[500];
+	GetSystemDirectory(data, 500);
+	std::string sys_disc = "";
+	sys_disc += char(data[0]);
+	sys_disc += char(data[1]);
+	sys_disc += "\\UML_Creator";
+	return sys_disc;
 }

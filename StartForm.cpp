@@ -12,13 +12,13 @@
 
 System::Void UMLCreator::StartForm::YourselfStartForm_Click(System::Object^ sender, System::EventArgs^ e)
 {
-	WriteInFile("ClassRead.txt", STANDART_CLASS);
-	//do class of bogdan
 	DataCollector DC_PARSER;
-	DC_PARSER.Parse("ClassRead.txt");
-	DC_PARSER.output("ParseClass.txt");
+	create_dir(DC_PARSER);
+	WriteInFile(get_data_dir() + "\\ClassRead.txt", STANDART_CLASS);
+	DC_PARSER.Parse(get_data_dir() + "\\ClassRead.txt");
+	DC_PARSER.output(get_data_dir() + "\\ParseClass.txt");
 
-	ParserUmlAndChangeImage();
+	ParserUmlAndChangeImage(get_data_dir() + "\\output.jpg");
 
 	ResultForm^ form = gcnew ResultForm();
 	this->Hide();
@@ -29,13 +29,15 @@ System::Void UMLCreator::StartForm::CreateStartForm_Click(System::Object^ sender
 {
 	std::string str;
 	Convert_String_to_string(ClassTextStartForm->Text->ToString(), str);
-	WriteInFile("ClassRead.txt", str);
 
 	DataCollector DC_PARSER;
-	DC_PARSER.Parse("ClassRead.txt");
-	DC_PARSER.output("ParseClass.txt");
+	create_dir(DC_PARSER);
+	WriteInFile(get_data_dir() + "\\ClassRead.txt", str);
 
-	ParserUmlAndChangeImage();
+	DC_PARSER.Parse(get_data_dir() + "\\ClassRead.txt");
+	DC_PARSER.output(get_data_dir() + "\\ParseClass.txt");
+
+	ParserUmlAndChangeImage(get_data_dir() + "\\output.jpg");
 
 	ResultForm^ form = gcnew ResultForm();
 	this->Hide();
