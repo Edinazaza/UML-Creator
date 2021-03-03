@@ -1,0 +1,4 @@
+C:\Users\lalbo\source\repos\UML_Creator_Repos\x64\Release\UMLCreator.ResultForm.resources
+C:\Users\lalbo\source\repos\UML_Creator_Repos\x64\Release\UMLCreator.StartForm.resources
+C:\Users\lalbo\source\repos\UML_Creator_Repos\x64\Release\UML_Creator.vcxproj.GenerateResource.cache
+C:\Users\lalbo\source\repos\UML_Creator_Repos\x64\Release\UML_Creator.exe
