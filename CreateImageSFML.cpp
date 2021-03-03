@@ -45,12 +45,12 @@ void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, st
 	unsigned int width = 252;
 	for (std::string& i : meth)
 	{
-		width = max(i.size() * 2 + 20, width);
+		width = max(unsigned(i.size()) * 2 + 20, width);
 	}
 
-	const unsigned int hight = (meth.size() + var.size()) * 14 + 50;
+	const unsigned int hight = (unsigned(meth.size()) + unsigned(var.size())) * 14 + 50;
 
-	sf::RectangleShape rectangle(sf::Vector2f(width - 2, hight - 2));
+	sf::RectangleShape rectangle(sf::Vector2f(float(width - 2), float(hight - 2)));
 	rectangle.setFillColor(sf::Color::White);
 	rectangle.setOutlineThickness(1);
 	rectangle.setOutlineColor(sf::Color::Black);
@@ -67,11 +67,11 @@ void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, st
 
 	// class name
 	txt.setCharacterSize(16);
-	txt.setStyle(sf::Text::Regular);
+	txt.setStyle(sf::Text::Bold);
 	txt.setString(name);
-	txt.move(sf::Vector2f(width / 2.5, 7));
+	txt.move(sf::Vector2f((float(width)/2-4* float(name.size())), float(7)));
 	renderTexture.draw(txt);
-	rectangle.setSize(sf::Vector2f(width - 2, 1));
+	rectangle.setSize(sf::Vector2f(float(width - 2), float(1)));
 	rectangle.setOutlineThickness(0);
 	rectangle.setFillColor(sf::Color::Black);
 	rectangle.setPosition(rectangle.getPosition().x, txt.getPosition().y + 19);
@@ -86,11 +86,12 @@ void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, st
 	{
 		txt.setString(i);
 		txt.setPosition(8, space);
+		txt.setStyle(sf::Text::Regular);
 		renderTexture.draw(txt);
 		space += 14;
 	}
 	renderTexture.draw(txt);
-	rectangle.setSize(sf::Vector2f(width - 2, 1));
+	rectangle.setSize(sf::Vector2f(float(width - 2), float(1)));
 	rectangle.setOutlineThickness(0);
 	rectangle.setFillColor(sf::Color::Black);
 	rectangle.setPosition(rectangle.getPosition().x, txt.getPosition().y + 19);
@@ -120,5 +121,6 @@ void ParserUmlAndChangeImage(std::string FilePath)
 {
 	std::string filename = get_data_dir() + "\\ParseClass.txt";
 	ParserUML pUML;
-	CreateImage(pUML.getMethod(filename), pUML.getVariables(filename), pUML.getClassName(filename), FilePath);
+	size_t counter = 1;
+	CreateImage(pUML.getMethod(filename, counter), pUML.getVariables(filename, counter), pUML.getClassName(filename, counter), FilePath);
 }

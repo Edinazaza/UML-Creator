@@ -11,9 +11,9 @@ class ParserUML
 public:
 	ParserUML() = default;
 
-	std::vector<std::string> getVariables(const std::string& filename);
-	std::vector<std::string> getMethod(const std::string& filename);
-	std::string getClassName(const std::string& filename);
+	std::vector<std::string> getVariables(const std::string& filename, size_t count);
+	std::vector<std::string> getMethod(const std::string& filename, size_t count);
+	std::string getClassName(const std::string& filename, size_t count);
 
 private:
 	std::string class_name_;
@@ -21,5 +21,5 @@ private:
 	std::vector<std::string> methods_;
 
 	std::string getFileTxt(const std::string& filename);
-	std::string getSubStr(const std::string& str, const std::string& sub_str);
+	std::string getSubStr(const std::string& str, const std::string& sub_str, size_t count);
 };

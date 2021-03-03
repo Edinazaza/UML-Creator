@@ -15,9 +15,10 @@ System::Void UMLCreator::StartForm::YourselfStartForm_Click(System::Object^ send
 	DataCollector DC_PARSER;
 	create_dir(DC_PARSER);
 	WriteInFile(get_data_dir() + "\\ClassRead.txt", STANDART_CLASS);
-	DC_PARSER.Parse(get_data_dir() + "\\ClassRead.txt");
-	DC_PARSER.output(get_data_dir() + "\\ParseClass.txt");
-
+	/*DC_PARSER.Parse(get_data_dir() + "\\ClassRead.txt");
+	DC_PARSER.output(get_data_dir() + "\\ParseClass.txt");*/
+	std::ifstream source(get_data_dir() + "\\ClassRead.txt");
+	parse_several_classes(source, (get_data_dir() + "\\ParseClass.txt"));
 	ParserUmlAndChangeImage(get_data_dir() + "\\output.jpg");
 
 	ResultForm^ form = gcnew ResultForm();
@@ -34,8 +35,10 @@ System::Void UMLCreator::StartForm::CreateStartForm_Click(System::Object^ sender
 	create_dir(DC_PARSER);
 	WriteInFile(get_data_dir() + "\\ClassRead.txt", str);
 
-	DC_PARSER.Parse(get_data_dir() + "\\ClassRead.txt");
-	DC_PARSER.output(get_data_dir() + "\\ParseClass.txt");
+	/*DC_PARSER.Parse(get_data_dir() + "\\ClassRead.txt");
+	DC_PARSER.output(get_data_dir() + "\\ParseClass.txt");*/
+	std::ifstream source(get_data_dir() + "\\ClassRead.txt");
+	parse_several_classes(source, (get_data_dir() + "\\ParseClass.txt"));
 
 	ParserUmlAndChangeImage(get_data_dir() + "\\output.jpg");
 

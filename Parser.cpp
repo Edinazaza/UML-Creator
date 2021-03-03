@@ -1,186 +1,294 @@
 #include "Parser.h"
 #include <windows.h>
 
-void DataCollector::Parse(std::string filepath)
+bool DataCollector::Parse(std::ifstream& source)
 {
-	std::ifstream source(filepath);
 	std::string str;
-	while (str != "class")
-		source >> str;
-	source >> str;
-	class_name = str;
-	source >> str;
-	while (source)
+	char peek_res = '.';
+
+	while (str != "class" && source)
 	{
+		if (!source) { return true; }
 		source >> str;
-		catch_section(str);
-		if (str == "};")
-			break;
+	}
+	if (!source) { return true; }
+	new_char;
+	str.clear();
+	while (peek_res != '{' && peek_res != '\n' && peek_res != '\t' && peek_res != ' ' && peek_res != ':')
+	{
+		str += peek_res;
+		new_char;
+	}
 
-		if (str.find('{') != std::string::npos && str.find('}') == std::string::npos)
+	class_name = str;
+	str.clear();
+	while (peek_res != '{') {
+		if (peek_res == ':')
 		{
-			ignore_by(source, '{', '}');
-			continue;
+			peek_res = source.peek();
+			source.ignore(1);
+			while (peek_res != '{')
+			{
+				new_char;
+				str += peek_res;
+				if ((peek_res == ' ' || peek_res == '\n' || peek_res == '\t') && !str.empty())
+				{
+					if (str == "public" || str == "private" || str == "protected") { inheritance.second = str; str.clear(); }
+					else if (inheritance.second.empty()) { inheritance.second = "private"; inheritance.first = str; break; }
+					else { inheritance.first = str; break; }
+				}
+			}
+			if (inheritance.second.empty()) { inheritance.second = "private"; inheritance.first = str; break; }
+			else if (inheritance.first.empty()) { inheritance.first = str; break; }
 		}
-		clean_from_substrs(str, "std::");
-		bool is_template_type = clean_template_type(source, str);
-		std::string t;
-		bool is_array = clean_array_type(str, t);
+		if (peek_res == '{') { break; }
+		new_char;
+	}
 
-		if (types.find(str) != types.end() || is_template_type || is_array)
+	std::string type;
+	bool method = false;
+	bool variable = false;
+	bool variable_line = false;
+	while (source && str != "};")
+	{
+		new_char;
+		bool clean = main_cycle_checks(source, type, str, peek_res, s);
+		while (!clean) { clean = main_cycle_checks(source, type, str, peek_res, s); }
+		if ((!type.empty() || str == class_name) && peek_res == '(') { parse_method(source, type, str, peek_res); }
+		else if (!type.empty() && (peek_res == ',' || peek_res == ';')) { parse_var_line(source, type, str, peek_res); }
+		str += peek_res;
+		//if (types.find(str) != types.end()) { type = str; str.clear(); }
+		if (str == "public" || str == "private" || str == "protected") { curr_section = str; new_char; str.clear(); }
+	}
+	return false;
+}
+
+std::string DataCollector::sections_to_chars(const std::string& section) const
+{
+	std::string ret = "+";
+	if (section == "public") { ret = "+"; }
+	else if (section == "private") { ret = "-"; }
+	else if (section == "protected") { ret = "#"; }
+	return ret;
+}
+
+void DataCollector::define_template_type(std::ifstream& source, std::string& type, std::string& str, char& peek_res)
+{
+	size_t bracket_count = std::count(str.begin(), str.end(), '<') - std::count(str.begin(), str.end(), '>');
+	while (bracket_count != 0)
+	{
+		new_char;
+		if (peek_res == '>') { --bracket_count; }
+		else if (peek_res == '<') { ++bracket_count; }
+		str += peek_res;
+	}
+	clean_from_substrs(str, "std::");
+	type = str;
+	str.clear();
+	new_char;
+}
+
+void DataCollector::clean_from_substrs(std::string& source, const std::string substr)
+{
+	bool cleaned = false;
+	size_t pos = 0;
+	while (!cleaned)
+	{
+		pos = source.find(substr);
+		if (pos == npos) { cleaned = true; }
+		else
 		{
-			std::string type = str;
-			if (is_array)
-			{
-				type = t;
-			}
-
-			if (is_template_type) { source >> str; }
-
-			read_data_type(source, type, str);
-
-			if (str.find('(') == std::string::npos)
-			{
-				if (str[str.size() - 1] == ';') {
-					str.erase(str.size() - 1);
-					clean_array_type(str, type);
-					variables.push_back({ { str, type }, curr_section });
-				}
-				peek_char(source, str, ',');
-
-				if (str[str.size() - 1] == ',')
-				{
-					size_t is_arr = type.find('[');
-					bool last = false;
-					bool first = true;
-					while (true)
-					{
-						is_arr = type.find('[');
-						if (str.find(';') != std::string::npos)
-							last = true;
-						clean_from_symb(str, ',');
-						clean_from_symb(str, ';');
-
-						if (is_arr != std::string::npos && str.find('*') == std::string::npos && !first)
-						{
-							refresh_type(str, type);
-							variables.push_back({ { str, type }, curr_section });
-						}
-						else if (is_arr != std::string::npos && str[0] == '*' && !first)
-						{
-							refresh_type(str, type);
-							variables.push_back({ { str, type }, curr_section });
-						}
-						else if (is_arr == std::string::npos)
-						{
-							clean_array_type(str, type);
-							variables.push_back({ { str, type }, curr_section });
-						}
-
-						else { variables.push_back({ { str, type }, curr_section }); }
-
-						first = false;
-						if (last)
-							break;
-						source >> str;
-						if (str == ",") { source >> str; }
-						clean_from_symb(str, ',');
-						if (str == "*")
-						{
-							source >> str;
-							std::string temp = "*" + str;
-							str = temp;
-						}
-					}
-				}
-			}
-			else
-			{
-				auto sep = separate(str);
-				std::pair<std::string, std::string> t_n_p = { type, str };
-				n_t var_map;
-
-				if (sep.second == ")" || sep.second == ");")
-				{
-					methods.push_back({ { t_n_p, curr_section }, var_map });
-					continue;
-				}
-
-				if (sep.first && types.find(sep.second) != types.end())
-				{
-					str = sep.second;
-					read_data_type(source, sep.second, str);
-					clean_array_type(str, sep.second);
-
-					if (str.find(')') != std::string::npos)
-					{
-						str.erase(str.find(')'));
-						var_map.push_back({ str, sep.second });
-						methods.push_back({ { t_n_p, curr_section }, std::move(var_map) });
-						continue;
-					}
-					clean_from_symb(str, ',');
-					var_map.push_back({ str, sep.second });
-				}
-				parse_method(source, var_map);
-				methods.push_back({ { t_n_p, curr_section }, std::move(var_map) });
-			}
-			continue;
-		}
-		auto sep = separate(str);
-		if (str == class_name)
-		{
-			std::pair<std::string, n_t> constructor;
-			bool is_template = clean_template_type(source, sep.second);
-
-			constructor.first = curr_section;
-			if (sep.second == ")" || sep.second == ");")
-			{
-				constructors.push_back(constructor);
-				continue;
-			}
-			if (sep.first && types.find(sep.second) != types.end() || is_template)
-			{
-				source >> str;
-				if (str == "*")
-				{
-					sep.second += str;
-					source >> str;
-				}
-				peek_char(source, str, ',');
-				if (str[str.size() - 2] == ')' && str[str.size() - 1] == ';')
-				{
-					clean_from_symb(str, ')');
-					clean_from_symb(str, ';');
-					constructor.second.push_back({ str, sep.second });
-					continue;
-				}
-				clean_from_symb(str, ')');
-				clean_from_symb(str, ';');
-				clean_from_symb(str, ',');
-				clean_array_type(str, sep.second);
-				constructor.second.push_back({ str, sep.second });
-			}
-			parse_method(source, constructor.second);
-			constructors.push_back(constructor);
+			std::string copy = source.substr(0, pos);
+			copy += source.substr(pos + substr.size(), source.size() - (pos + substr.size()));
+			source = copy;
 		}
 	}
 }
 
-void DataCollector::output(std::string filepath)
+bool DataCollector::main_cycle_checks(std::ifstream& source, std::string& type, std::string& str, char& peek_res, bool s)
 {
-	if (filepath == "nofile.txt")
+	bool clean = true;
+	if (str == "//") { ignore_commentary(source, str, peek_res); }
+	if (types.find(str) != types.end()) { type += (type.empty() ? "" : " ") + str; str.clear(); }
+	if (str == "std::") { str.clear(); }
+	if (peek_res == '<') { str += peek_res; define_template_type(source, type, str, peek_res); clean = false; }
+	if (!type.empty() && peek_res == '*') { type += "[1..*]"; new_char; clean = false; }
+	if (peek_res == '=') { new_char; clean = false; }
+	if (peek_res == '"') { ignore_string(source, peek_res); clean = false; }
+	if (peek_res == '{') { ignore_block(source, peek_res); clean = false; }
+	if (peek_res == '[')
 	{
-		filepath = data_directory + "\\output.txt";
+		type += "[1..";
+		while (peek_res != ']')
+		{
+			new_char;
+			type += peek_res;
+		}
+		new_char;
+		clean = false;
 	}
-	std::ofstream stream(filepath);
+	if (type.empty() && s) { str.clear(); }
+
+	return clean;
+}
+
+bool DataCollector::parse_method_checks(std::ifstream& source, std::string& type, std::string& str, char& peek_res,
+	std::pair<std::pair<std::pair<std::string, std::string>, std::string>, n_t>& method, bool s)
+{
+	bool clean = true;
+	//if (types.find(str) != types.end()) { type += (type.empty() ? "" : " ") + str; str.clear(); }
+	clean = main_cycle_checks(source, type, str, peek_res, s);
+	if (peek_res == ',') {
+		method.second.push_back({ str, type });
+		str.clear();
+		type.clear();
+		new_char;
+		clean = false;
+	}
+	return clean;
+}
+
+bool DataCollector::ignore_sep_symb(std::ifstream& source, char& peek_res)
+{
+	bool ret = false;
+	while (peek_res == ' ' || peek_res == '\n' || peek_res == '\t')
+	{
+		peek_res = source.peek();
+		source.ignore(1);
+		ret = true;
+	}
+	return ret;
+}
+
+void DataCollector::parse_method(std::ifstream& source, std::string& type, std::string& str, char& peek_res)
+{
+	std::pair<std::pair<std::pair<std::string, std::string>, std::string>, n_t> method;
+	method.first.first.first = type;
+	method.first.first.second = str;
+	method.first.second = curr_section;
+	str.clear();
+	type.clear();
+	while (peek_res != ')')
+	{
+		new_char;
+		bool clean = parse_method_checks(source, type, str, peek_res, method, s);
+		while (!clean) { clean = parse_method_checks(source, type, str, peek_res, method, s); }
+		str += peek_res;
+	}
+	if (!str.empty() && !type.empty()) {
+		str.pop_back();
+		method.second.push_back({ str, type });
+	}
+	methods.push_back(method);
+	type.clear();
+	str.clear();
+	new_char;
+}
+
+void DataCollector::ignore_commentary(std::ifstream& source, std::string& str, char& peek_res)
+{
+	while (peek_res != '\n')
+	{
+		new_char;
+	}
+	str.clear();
+	new_char;
+}
+
+void DataCollector::parse_var_line(std::ifstream& source, std::string& type, std::string& str, char& peek_res)
+{
+	variables.push_back({ {str, type}, curr_section });
+	str.clear();
+	if (type.find('[') != npos) { type.erase(type.find('['), 6); }
+	bool line = false;
+	while (peek_res != ';')
+	{
+		new_char;
+		bool clean = var_line_checks(source, type, str, peek_res);
+		while (!clean) { clean = var_line_checks(source, type, str, peek_res); }
+		str += peek_res;
+		line = true;
+	}
+	if (line) {
+		str.pop_back();
+		variables.push_back({ {str, type}, curr_section });
+	}
+	type.clear();
+	str.clear();
+	new_char;
+}
+
+void DataCollector::ignore_block(std::ifstream& source, char& peek_res)
+{
+	size_t count = 1;
+	bool b = false;
+	while (count != 0)
+	{
+		if (!b) { new_char; }
+		b = false;
+		if (peek_res == '{') { ++count; }
+		else if (peek_res == '}') { --count; }
+		else if (peek_res == '"') { ignore_string(source, peek_res); b = true; }
+	}
+	new_char;
+}
+
+void DataCollector::ignore_string(std::ifstream& source, char& peek_res)
+{
+	new_char;
+	while (peek_res != '"') { new_char; }
+	new_char;
+}
+
+bool DataCollector::var_line_checks(std::ifstream& source, std::string& type, std::string& str, char& peek_res)
+{
+	bool clean = true;
+	if (types.find(str) != types.end()) { type += (type.empty() ? "" : " ") + str; str.clear(); }
+	if (peek_res == '=') { new_char; clean = false; }
+	if (peek_res == '"') { ignore_string(source, peek_res); clean = false; }
+	if (peek_res == '{') { ignore_block(source, peek_res); clean = false; }
+	if (peek_res == ',') {
+		variables.push_back({ {str, type}, curr_section });
+		if (type.find('[') != npos) { type.erase(type.find('['), type.size()); }
+		str.clear();
+		new_char;
+		clean = false;
+	}
+	if (peek_res == '[')
+	{
+		type += "[1..";
+		while (peek_res != ']')
+		{
+			new_char;
+			type += peek_res;
+		}
+		new_char;
+		clean = false;
+	}
+	if (peek_res == '*') { type += "[1..*]"; new_char; clean = false; }
+	return clean;
+}
+
+void DataCollector::output(size_t& count, std::string filepath)
+{
+	std::ofstream stream(filepath, (count == 1 ? std::ios_base::out : std::ios_base::app));
+	if (class_name.size() == 0)
+	{
+		(filepath == "nofile.txt" ? std::cout : stream) << "There is no any class in your input!";
+		return;
+	}
 	create_dir(*this);
-	(filepath == "nofile.txt" ? std::cout : stream) << (filepath == "nofile.txt" ? "class_name: " : "<name>\n") << class_name << (filepath == "nofile.txt" ? "\n\nvariables: " : "\n</name>\n<variables>");
+
+	(filepath == "nofile.txt" ? std::cout : stream) << (filepath == "nofile.txt" ? "class_name: " : ("<" + std::to_string(count) + "name>\n")) <<
+		class_name << (filepath == "nofile.txt" ? (inheritance.first.empty() ? "\ninheritance: No" : "\ninheritance: parent - " + inheritance.first + ", type - " + inheritance.second) : "")
+		<< (filepath == "nofile.txt" ? "\n\nvariables: " : ("\n</" + std::to_string(count) + "name>\n<" + std::to_string(count) + "variables>"));
+
 	for (const auto& item : variables)
 	{
 		(filepath == "nofile.txt" ? std::cout : stream) << '\n' << sections_to_chars(item.second) << " " << item.first.first << ": " << item.first.second;
 	}
-	(filepath == "nofile.txt" ? std::cout : stream) << (filepath == "nofile.txt" ? "\n\nmethods:\n" : "\n</variables>\n<methods>\n");
+	(filepath == "nofile.txt" ? std::cout : stream) <<
+		(filepath == "nofile.txt" ? "\n\nmethods:\n" : ("\n</" + std::to_string(count) + "variables>\n<" + std::to_string(count) + "methods>\n"));
 	bool first = true;
 	for (const auto& item : methods)
 	{
@@ -197,43 +305,10 @@ void DataCollector::output(std::string filepath)
 		insert_newline_symb(method, 40);
 		(filepath == "nofile.txt" ? std::cout : stream) << method << '\n';
 	}
-	(filepath == "nofile.txt" ? std::cout : stream) << (filepath == "nofile.txt" ? "\n\nconstructors:\n" : "\n");
-	first = true;
-	for (const auto& item : constructors) {
-		std::string constructor = sections_to_chars(item.first) + " " + class_name + "(";
-		first = true;
-		for (const auto& itm : item.second)
-		{
-			if (!first)
-				constructor += ", ";
-			constructor += "in " + itm.first + ": " + itm.second;
-			first = false;
-		}
-		constructor += ')';
-		insert_newline_symb(constructor, 40);
-		(filepath == "nofile.txt" ? std::cout : stream) << constructor << '\n';
-
-	}
 	(filepath == "nofile.txt" ? std::cout : stream) << "+ ~" << class_name << "()" << '\n';
 
-	(filepath == "nofile.txt" ? std::cout : stream) << (filepath == "nofile.txt" ? "\n\n" : "</methods>");
-}
-
-std::pair<bool, std::string> DataCollector::separate(std::string& source)
-{
-	std::string ret = "";
-	bool separated = false;
-	for (size_t i = source.size() - 1; i != 0; --i)
-	{
-		if (source[i] == '(')
-		{
-			ret = source.substr(i + 1, source.size() - i);
-			source.erase(i, source.size() - i);
-			separated = true;
-			break;
-		}
-	}
-	return { separated, ret };
+	(filepath == "nofile.txt" ? std::cout : stream) << (filepath == "nofile.txt" ? "\n\n" : "</" + std::to_string(count) + "methods>\n");
+	++count;
 }
 
 void DataCollector::insert_newline_symb(std::string& source, size_t size)
@@ -252,174 +327,23 @@ void DataCollector::insert_newline_symb(std::string& source, size_t size)
 	}
 }
 
-std::string DataCollector::sections_to_chars(const std::string& section) const
+void DataCollector::add_custom_class(std::string source)
 {
-	std::string ret = "+";
-	if (section == "public:") { ret = "+"; }
-	else if (section == "private:") { ret = "-"; }
-	else if (section == "protected:") { ret = "#"; }
-	return ret;
+	create_dir(*this);
+	std::ofstream stream(data_directory + "\\cc.dtt", std::ios_base::app);
+	stream << " " << source;
 }
 
-void DataCollector::parse_method(std::ifstream& source, n_t& var_map)
+void DataCollector::read_custom_class()
 {
-	std::string type, str = " ";
-	size_t counter = 0;
-	while (str.find(')') == std::string::npos && source)
-	{
-		source >> str;
-		if (str == ",") { source >> str; }
-		if (str[0] == ',') { clean_from_symb(str, ','); }
-		clean_template_type(source, str);
-		bool is_type = clean_array_type(str, type);
-		if (types.find(str) != types.end() || is_type)
+	if (std::filesystem::exists(data_directory + "\\cc.dtt")) {
+		std::ifstream stream(data_directory + "\\cc.dtt");
+		std::string type;
+		while (stream)
 		{
-			if (is_type)
-				source >> str;
-			else
-				type = str;
-			read_data_type(source, type, str);
-			clean_array_type(str, type);
-
-			if (str[str.size() - 1] == ')') {
-				str.erase(str.size() - 1);
-				var_map.push_back({ str, type });
-				break;
-			}
-			else if (str.size() > 1 && str[str.size() - 2] == ')' && str[str.size() - 1] == ';')
-			{
-				str.erase(str.size() - 2);
-				var_map.push_back({ str, type });
-				break;
-			}
-			clean_from_symb(str, ',');
-			var_map.push_back({ str, type });
+			stream >> type;
+			types.insert(type);
 		}
-	}
-}
-
-void DataCollector::clean_from_symb(std::string& str, char symb)
-{
-	size_t res = str.find(symb);
-	if (res != std::string::npos) {
-		str.erase(res, 1);
-	}
-}
-
-void DataCollector::ignore_by(std::ifstream& source, char o_bracket, char c_bracket)
-{
-	std::string str;
-	source >> str;
-	while (str.find(c_bracket) == std::string::npos)
-	{
-		if (str.find(o_bracket) != std::string::npos)
-			ignore_by(source, o_bracket, c_bracket);
-		source >> str;
-	}
-}
-
-void DataCollector::clean_from_substrs(std::string& source, const std::string substr)
-{
-	bool cleaned = false;
-	size_t pos = 0;
-	while (!cleaned)
-	{
-		pos = source.find(substr);
-		if (pos == std::string::npos) { cleaned = true; }
-		else
-		{
-			std::string copy = source.substr(0, pos);
-			copy += source.substr(pos + substr.size(), source.size() - (pos + substr.size()));
-			source = copy;
-		}
-	}
-}
-
-bool DataCollector::clean_template_type(std::ifstream& source, std::string& first_part)
-{
-	if (first_part.find('(') != std::string::npos)
-		return false;
-	std::string str;
-	int brackets = std::count(first_part.begin(), first_part.end(), '<') - std::count(first_part.begin(), first_part.end(), '>');
-	if (brackets < 0)
-		return false;
-	bool is_type = false;
-	while (brackets != 0)
-	{
-		is_type = true;
-		source >> str;
-		brackets += std::count(str.begin(), str.end(), '<') - std::count(str.begin(), str.end(), '>');
-		clean_from_substrs(str, "std::");
-		first_part += " " + str;
-	}
-	return is_type;
-}
-
-bool DataCollector::clean_array_type(std::string& source, std::string& type)
-{
-	bool is_type = false;
-	if (source.find('[') != std::string::npos && source.find(']') != std::string::npos)
-	{
-		auto o_b = source.find('[');
-		auto c_b = source.find(']');
-		std::string size = source.substr(o_b + 1, c_b - o_b - 1);
-		type += "[1.." + size + ']';
-		source.erase(o_b, c_b - o_b + 1);
-	}
-	if (source.find('*') != std::string::npos)
-	{
-		source.erase(source.find('*'), 1);
-		if (types.find(source) != types.end())
-		{
-			type = source + "[1..*]";
-			is_type = true;
-		}
-		else
-		{
-			type += "[1..*]";
-		}
-
-	}
-	if (type.size() != 0 && type[type.size() - 1] == '*')
-	{
-		std::string subtype = type.substr(0, type.size() - 1);
-		if (types.find(subtype) != types.end() && subtype.find(' ') == std::string::npos)
-		{
-			type.erase(type.size() - 1, 1);
-			type += "[1..*]";
-		}
-		else if (subtype.find(' ') != std::string::npos)
-		{
-			std::string s = subtype.substr(0, subtype.find(' '));
-			if (types.find(s) != types.end())
-			{
-				type.erase(type.size() - 1, 1);
-				type += "[1..*]";
-			}
-		}
-	}
-	return is_type;
-}
-
-void DataCollector::refresh_type(std::string& str, std::string& type)
-{
-	std::string nptr_type = type;
-	nptr_type.erase(nptr_type.find('['));
-	type = nptr_type;
-	clean_array_type(str, type);
-}
-
-void DataCollector::read_data_type(std::ifstream& source, std::string& type, std::string& str)
-{
-	while (types.find(str) != types.end())
-	{
-		source >> str;
-		if (str == "*") {
-			type += str;
-			source >> str;
-		}
-		if (types.find(str) != types.end())
-			type += " " + str;
 	}
 }
 
@@ -444,50 +368,23 @@ std::string create_dir(DataCollector& dc)
 	return dir;
 }
 
-void DataCollector::add_custom_class(std::string source)
+size_t parse_several_classes(std::ifstream& source, const std::string& output_path)
 {
-	create_dir(*this);
-	std::ofstream stream(data_directory + "\\cc.dtt", std::ios_base::app);
-	stream << " " << source;
-}
-
-void DataCollector::read_custom_class()
-{
-	if (std::filesystem::exists(data_directory + "\\cc.dtt")) {
-		std::ifstream stream(data_directory + "\\cc.dtt");
-		std::string type;
-		while (stream)
-		{
-			stream >> type;
-			types.insert(type);
-		}
-	}
-}
-
-void DataCollector::catch_section(const std::string& str)
-{
-	if (str == "public:" || str == "private:" || str == "protected:")
+	size_t count = 1;
+	std::vector<DataCollector> data_vec;
+	std::ios_base::app;
+	bool finished = false;
+	while (!finished)
 	{
-		curr_section = str;
+		DataCollector dc;
+		finished = dc.Parse(source);
+		if (!finished) { data_vec.push_back(std::move(dc)); }
 	}
-}
-
-void DataCollector::peek_char(std::ifstream& source, std::string& str, char c)
-{
-	char peek_res = ' ';
-	bool pure_coma = false;
-	while (peek_res == ' ')
+	for (auto& item : data_vec)
 	{
-		peek_res = source.peek();
-		if (peek_res == c)
-		{
-			str += c;
-		}
-		else if (peek_res == ' ')
-		{
-			source.ignore(1);
-		}
+		item.output(count, output_path);
 	}
+	return count;
 }
 
 std::string get_data_dir()
