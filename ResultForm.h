@@ -55,7 +55,7 @@ namespace UMLCreator {
 		/// <summary>
 		/// Обязательная переменная конструктора.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+		System::ComponentModel::Container^ components;
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -158,6 +158,6 @@ namespace UMLCreator {
 	private: System::Void RedactorResultForm_TextChanged(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void ChangeResultForm_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void PictureResultForm_Click(System::Object^ sender, System::EventArgs^ e);
-private: System::Void DownloadResultForm_Click_1(System::Object^ sender, System::EventArgs^ e);
-};
+	private: System::Void DownloadResultForm_Click_1(System::Object^ sender, System::EventArgs^ e);
+	};
 }

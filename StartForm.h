@@ -41,6 +41,7 @@ namespace UMLCreator {
 	private: System::Windows::Forms::Button^ CreateStartForm;
 	private: System::Windows::Forms::Label^ label2;
 
+
 	private:
 		/// <summary>
 		/// Обязательная переменная конструктора.
@@ -76,7 +77,7 @@ namespace UMLCreator {
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Courier New", 21.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->label1->Location = System::Drawing::Point(95, 0);
+			this->label1->Location = System::Drawing::Point(83, 0);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(287, 32);
 			this->label1->TabIndex = 1;
@@ -105,7 +106,7 @@ namespace UMLCreator {
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(166, 499);
+			this->label2->Location = System::Drawing::Point(155, 498);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(138, 13);
 			this->label2->TabIndex = 4;

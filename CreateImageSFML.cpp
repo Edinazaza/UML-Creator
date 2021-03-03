@@ -6,7 +6,7 @@
 #include "resource.h"
 #include <windows.h>
 #include "Parser.h"
-
+#include <algorithm>
 
 sf::Font LoadFontFromResource(const int ID)
 {
@@ -33,12 +33,19 @@ sf::Font LoadFontFromResource(const int ID)
 	return font;
 }
 
+template <class T, class T_>
+T max(T a, T_ b)
+{
+	if (a > b) { return a; }
+	return b;
+}
+
 void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::string name, std::string FilePath)
 {
 	unsigned int width = 252;
 	for (std::string& i : meth)
 	{
-		width = std::max(i.size() * 2 + 20, width);
+		width = max(i.size() * 2 + 20, width);
 	}
 
 	const unsigned int hight = (meth.size() + var.size()) * 14 + 50;
