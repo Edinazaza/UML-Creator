@@ -6,7 +6,7 @@ bool DataCollector::Parse(std::ifstream& source)
 	std::string str;
 	char peek_res = '.';
 
-	while (str != "class" && source)
+	while (str != "class" && str != "struct" && source)
 	{
 		if (!source) { return true; }
 		source >> str;
