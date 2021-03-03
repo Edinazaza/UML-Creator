@@ -5,9 +5,6 @@
 
 *.jpg
 *.png
-*.tlog
-*.res
-*.resources
 
 # User-specific files
 *.rsuser
@@ -91,6 +88,9 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
+*.tlog
+*.resources
+*.res
 
 # Chutzpah Test files
 _Chutzpah*
