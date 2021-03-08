@@ -1,4 +1,5 @@
 #pragma once
+#include <stdlib.h>
 
 namespace UMLCreator {
 
@@ -33,6 +34,7 @@ namespace UMLCreator {
 			{
 				delete components;
 			}
+			exit(0);
 		}
 	private: System::Windows::Forms::TextBox^ ClassTextStartForm;
 	protected:

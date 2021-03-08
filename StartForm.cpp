@@ -39,7 +39,7 @@ System::Void UMLCreator::StartForm::CreateStartForm_Click(System::Object^ sender
 	DC_PARSER.output(get_data_dir() + "\\ParseClass.txt");*/
 	std::ifstream source(get_data_dir() + "\\ClassRead.txt");
 	parse_several_classes(source, (get_data_dir() + "\\ParseClass.txt"));
-
+	
 	ParserUmlAndChangeImage(get_data_dir() + "\\output.jpg");
 
 	ResultForm^ form = gcnew ResultForm();

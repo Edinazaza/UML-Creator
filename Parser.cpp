@@ -1,8 +1,11 @@
 #include "Parser.h"
 #include <windows.h>
 
+std::string get_data_dir();
+
 bool DataCollector::Parse(std::ifstream& source)
 {
+	parse_cc_to_set();
 	std::string str;
 	char peek_res = '.';
 
@@ -88,6 +91,17 @@ void DataCollector::define_template_type(std::ifstream& source, std::string& typ
 	new_char;
 }
 
+void DataCollector::parse_cc_to_set()
+{
+	std::ifstream source(get_data_dir() + "\\cc.dtt");
+	std::string str;
+	while (source)
+	{
+		source >> str;
+		types.insert(str);
+	}
+}
+
 void DataCollector::clean_from_substrs(std::string& source, const std::string substr)
 {
 	bool cleaned = false;
@@ -108,8 +122,8 @@ void DataCollector::clean_from_substrs(std::string& source, const std::string su
 bool DataCollector::main_cycle_checks(std::ifstream& source, std::string& type, std::string& str, char& peek_res, bool s)
 {
 	bool clean = true;
-	if (str == "//") { ignore_commentary(source, str, peek_res); }
-	if (types.find(str) != types.end()) { type += (type.empty() ? "" : " ") + str; str.clear(); }
+	//if (str == "//") { ignore_commentary(source, str, peek_res); }
+	if (types.find(str) != types.end()) { if (s || peek_res == '*') { type += (type.empty() ? "" : " ") + str; str.clear(); } }
 	if (str == "std::") { str.clear(); }
 	if (peek_res == '<') { str += peek_res; define_template_type(source, type, str, peek_res); clean = false; }
 	if (!type.empty() && peek_res == '*') { type += "[1..*]"; new_char; clean = false; }
@@ -151,7 +165,7 @@ bool DataCollector::parse_method_checks(std::ifstream& source, std::string& type
 bool DataCollector::ignore_sep_symb(std::ifstream& source, char& peek_res)
 {
 	bool ret = false;
-	while (peek_res == ' ' || peek_res == '\n' || peek_res == '\t')
+	while (peek_res == ' ' || peek_res == '\n' || peek_res == '\t' || peek_res == '\r')
 	{
 		peek_res = source.peek();
 		source.ignore(1);
@@ -162,6 +176,7 @@ bool DataCollector::ignore_sep_symb(std::ifstream& source, char& peek_res)
 
 void DataCollector::parse_method(std::ifstream& source, std::string& type, std::string& str, char& peek_res)
 {
+	if (str.empty() && type == class_name) { str = type; type.clear(); }
 	std::pair<std::pair<std::pair<std::string, std::string>, std::string>, n_t> method;
 	method.first.first.first = type;
 	method.first.first.second = str;
@@ -185,15 +200,15 @@ void DataCollector::parse_method(std::ifstream& source, std::string& type, std::
 	new_char;
 }
 
-void DataCollector::ignore_commentary(std::ifstream& source, std::string& str, char& peek_res)
-{
-	while (peek_res != '\n')
-	{
-		new_char;
-	}
-	str.clear();
-	new_char;
-}
+//void DataCollector::ignore_commentary(std::ifstream& source, std::string& str, char& peek_res)
+//{
+//	while (peek_res != '\n')
+//	{
+//		new_char;
+//	}
+//	str.clear();
+//	new_char;
+//}
 
 void DataCollector::parse_var_line(std::ifstream& source, std::string& type, std::string& str, char& peek_res)
 {
@@ -301,7 +316,7 @@ void DataCollector::output(size_t& count, std::string filepath)
 			method += "in " + itm.first + ": " + itm.second;
 			first = false;
 		}
-		method += "): " + item.first.first.first;
+		method += (item.first.first.second == class_name ? ")" : "): ") + item.first.first.first;
 		insert_newline_symb(method, 40);
 		(filepath == "nofile.txt" ? std::cout : stream) << method << '\n';
 	}

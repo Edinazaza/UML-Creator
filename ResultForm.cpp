@@ -53,3 +53,11 @@ System::Void UMLCreator::ResultForm::DownloadResultForm_Click_1(System::Object^ 
 
 	MessageBox::Show(downloadImage->FileName->ToString(), "Download", MessageBoxButtons::OK);
 }
+
+System::Void UMLCreator::ResultForm::ccr_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	UMLCreator::custom_class_input_form^ next_form = gcnew UMLCreator::custom_class_input_form();
+	this->Hide();
+	next_form->Show();
+	return System::Void();
+}

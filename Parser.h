@@ -37,6 +37,7 @@ private:
 	std::pair<std::string, std::string> inheritance;
 	bool s;
 
+	void parse_cc_to_set();
 	void insert_newline_symb(std::string& source, size_t size);
 	std::string sections_to_chars(const std::string& section) const;
 	void parse_var_line(std::ifstream& source, std::string& type, std::string& str, char& peek_res);

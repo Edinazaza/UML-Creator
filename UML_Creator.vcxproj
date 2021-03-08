@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClCompile Include="ConvertFunction.cpp" />
     <ClCompile Include="CreateImageSFML.cpp" />
+    <ClCompile Include="custom_class_input_form.cpp" />
     <ClCompile Include="FileWork.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Parser.cpp" />
@@ -149,6 +150,9 @@
   <ItemGroup>
     <ClInclude Include="ConvertFunction.h" />
     <ClInclude Include="CreateImageSFML.h" />
+    <ClInclude Include="custom_class_input_form.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="FileWork.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="resource.h" />
@@ -162,6 +166,9 @@
     <ClInclude Include="UMLParser.h" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="custom_class_input_form.resx">
+      <DependentUpon>custom_class_input_form.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ResultForm.resx">
       <DependentUpon>ResultForm.h</DependentUpon>
     </EmbeddedResource>

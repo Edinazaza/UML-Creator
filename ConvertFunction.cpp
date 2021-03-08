@@ -1,7 +1,7 @@
 #include "ConvertFunction.h"
 
 //конвертируем System::string^ в std::string
-std::string& Convert_String_to_string(String^ s, std::string& os) 
+std::string Convert_String_to_string(String^ s, std::string& os) 
 {
 	using namespace Runtime::InteropServices;
 	const char* chars =
@@ -19,7 +19,7 @@ String^ Convert_string_to_String(std::string& os, String^ s)
 }
 
 //конвертируем System::string^ в std::string
-std::string& Convert_String_to_string(String^ s) 
+std::string Convert_String_to_string(String^ s) 
 {
 	std::string os;
 	using namespace Runtime::InteropServices;

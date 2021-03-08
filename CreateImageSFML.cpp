@@ -120,7 +120,8 @@ void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, st
 void ParserUmlAndChangeImage(std::string FilePath)
 {
 	std::string filename = get_data_dir() + "\\ParseClass.txt";
+	std::ifstream source(filename);
 	ParserUML pUML;
 	size_t counter = 1;
-	CreateImage(pUML.getMethod(filename, counter), pUML.getVariables(filename, counter), pUML.getClassName(filename, counter), FilePath);
+	CreateImage(pUML.getMethod(source, counter), pUML.getVariables(source, counter), pUML.getClassName(source, counter), FilePath);
 }

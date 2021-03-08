@@ -1,3 +1,4 @@
+  UMLCreator.custom_class_input_form.resources - Embedded, ContainedInManifestFile, 
   UMLCreator.ResultForm.resources - Embedded, ContainedInManifestFile, 
   UMLCreator.StartForm.resources - Embedded, ContainedInManifestFile, 
 ImageRuntimeVersion: v4.0.30319
@@ -16,6 +17,9 @@ Assembly System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=
 Assembly System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089: 
 	hash=None, flags=None
 Class UMLCreator.StartForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+Class UMLCreator.custom_class_input_form: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :System.Windows.Forms.Form
     Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
 Class UMLCreator.ResultForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit

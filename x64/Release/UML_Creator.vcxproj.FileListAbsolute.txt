@@ -2,3 +2,5 @@ C:\Users\lalbo\source\repos\UML_Creator_Repos\x64\Release\UMLCreator.ResultForm.
 C:\Users\lalbo\source\repos\UML_Creator_Repos\x64\Release\UMLCreator.StartForm.resources
 C:\Users\lalbo\source\repos\UML_Creator_Repos\x64\Release\UML_Creator.vcxproj.GenerateResource.cache
 C:\Users\lalbo\source\repos\UML_Creator_Repos\x64\Release\UML_Creator.exe
+C:\Users\lalbo\source\repos\UML_Creator_Repos\x64\Release\UML_Creator.vcxprojAssemblyReference.cache
+C:\Users\lalbo\source\repos\UML_Creator_Repos\x64\Release\UMLCreator.custom_class_input_form.resources
