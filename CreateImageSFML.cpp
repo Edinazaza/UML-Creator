@@ -42,6 +42,7 @@ T max(T a, T_ b)
 
 void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::string name, std::string FilePath)
 {
+	if (name.empty() && meth.empty() && var.empty()) { return; }
 	unsigned int width = 252;
 	for (std::string& i : meth)
 	{

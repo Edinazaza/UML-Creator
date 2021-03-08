@@ -289,7 +289,10 @@ void DataCollector::output(size_t& count, std::string filepath)
 	std::ofstream stream(filepath, (count == 1 ? std::ios_base::out : std::ios_base::app));
 	if (class_name.size() == 0)
 	{
-		(filepath == "nofile.txt" ? std::cout : stream) << "There is no any class in your input!";
+		stream << "<" + std::to_string(count) + "name>\n" 
+			<< "</" + std::to_string(count) + "name>\n<" + std::to_string(count) + "variables>"
+			<< "\n</" + std::to_string(count) + "variables>\n<" + std::to_string(count) + "methods>\n" 
+			<< "</" + std::to_string(count) + "methods>\n";
 		return;
 	}
 	create_dir(*this);
@@ -395,6 +398,7 @@ size_t parse_several_classes(std::ifstream& source, const std::string& output_pa
 		finished = dc.Parse(source);
 		if (!finished) { data_vec.push_back(std::move(dc)); }
 	}
+	if (data_vec.empty()) { DataCollector dc; dc.output(count, output_path); return 0; }
 	for (auto& item : data_vec)
 	{
 		item.output(count, output_path);
