@@ -208,7 +208,7 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 
 			rt.draw(r_3);
 			m.lock();
-			rt.getTexture().copyToImage().saveToFile("out.png");
+			rt.getTexture().copyToImage().saveToFile((get_data_dir() + "\\out.png"));
 			m.unlock();
 		}
 	}

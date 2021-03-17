@@ -4,6 +4,8 @@
 #include <map>
 #include "ConvertFunction.h"
 #include "ResultForm.h"
+#include "Parser.h"
+#include "CreateImageSFML.h"
 
 std::string curr;
 std::map<std::string, ArrowProperities> arrows;
@@ -55,7 +57,7 @@ System::Void UMLCreator::Constructor::pictureBox_MouseMove(Object^ sender, Mouse
 		obj->Location = p;
 	}
 	if (obj->Name[0] == 'A' && obj->Name[1] == 'B' && down && ab_resizing) {
-		obj->ImageLocation = "out.png";
+		obj->ImageLocation = Convert_string_to_String(get_data_dir() + "\\out.png");
 	}
 }
 
@@ -63,7 +65,7 @@ System::Void UMLCreator::Constructor::pictureBox_MouseUp(Object^ sender, MouseEv
 {
 	PictureBox^ obj = safe_cast<PictureBox^>(sender);
 	if (obj->Name[0] == 'A' && obj->Name[1] == 'B' && ab_resizing) {
-		obj->ImageLocation = "out.png";
+		obj->ImageLocation = Convert_string_to_String(get_data_dir() + "\\out.png");
 	}
 	down = false;
 	ab_resizing = false;
@@ -80,17 +82,13 @@ System::Void UMLCreator::Constructor::save_to_file_Click(System::Object^ sender,
 {
 	sf::RenderTexture rt;
 	rt.create(this->Width, this->Height);
-	sf::RectangleShape rs(sf::Vector2f(50.f, 50.f));
-	rs.setFillColor(sf::Color::Red);
-	rs.move(0, float(this->Height - 50));
-	rt.draw(rs);
 
 	for (size_t i = 0; i < pics->Components->Count; ++i)
 	{
 		PictureBox^ obj = safe_cast<PictureBox^>(pics->Components[i]);
 		sf::Texture t;
-		obj->Image->Save("out_2.png");
-		t.loadFromFile("out_2.png");
+		obj->Image->Save(Convert_string_to_String(get_data_dir() + "\\out_2.png"));
+		t.loadFromFile((get_data_dir() + "\\out_2.png"));
 		sf::Sprite sp(t, sf::IntRect(0, 0, obj->Width, obj->Height));
 		sp.move(sf::Vector2<float>(float(obj->Location.X), float(this->Height - obj->Location.Y)));
 		sp.scale(sf::Vector2<float>(1.f, -1.f));
@@ -103,8 +101,8 @@ System::Void UMLCreator::Constructor::save_to_file_Click(System::Object^ sender,
 		sf::Text txt;
 		txt.setString(Convert_String_to_string(obj->Text));
 		txt.setStyle(sf::Text::Regular);
-		sf::Font f;
-		f.loadFromFile("C:\\Windows\\Fonts\\arial.ttf");
+		sf::Font f = LoadFontFromResource(101);
+	
 		txt.setFont(f);
 		txt.setCharacterSize(10);
 		txt.setFillColor(sf::Color::Black);
@@ -113,7 +111,16 @@ System::Void UMLCreator::Constructor::save_to_file_Click(System::Object^ sender,
 		rt.draw(txt);
 	}
 
-	rt.getTexture().copyToImage().saveToFile("out_3.png");
+	SaveFileDialog^ downloadImage = gcnew SaveFileDialog();
+	downloadImage->DefaultExt = ".png";
+	downloadImage->FileName = "constructor_output.png";
+	if (downloadImage->ShowDialog() != System::Windows::Forms::DialogResult::OK) {
+		return;
+	}
+
+	rt.getTexture().copyToImage().saveToFile(Convert_String_to_string(downloadImage->FileName->ToString()));
+
+	MessageBox::Show(downloadImage->FileName->ToString(), "Download", MessageBoxButtons::OK);
 }
 
 System::Void UMLCreator::Constructor::key_press(System::Object^ sender, KeyEventArgs^ e)
@@ -200,8 +207,8 @@ System::Void UMLCreator::Constructor::rotateToolStripMenuItem_Click(System::Obje
 		{
 			System::Drawing::Image^ im = obj->Image;
 			im->RotateFlip(RotateFlipType::Rotate90FlipNone);
-			im->Save("out_2.png");
-			obj->ImageLocation = "out_2.png";
+			im->Save(Convert_string_to_String(get_data_dir()+"\\out_2.png"));
+			obj->ImageLocation = Convert_string_to_String(get_data_dir() + "\\out_2.png");
 			int temp = obj->Width;
 			obj->Width = obj->Height;
 			obj->Height = temp;
@@ -241,7 +248,7 @@ System::Void UMLCreator::Constructor::create_new_pic_box(PictureBox^ pic, Pictur
 
 	pic->Name = Convert_string_to_String("AB" + std::to_string(count));
 	pic->BorderStyle = BorderStyle::FixedSingle;
-	obj == nullptr ? pic->ImageLocation = "out.png" : pic->Image = obj->Image;
+	obj == nullptr ? pic->ImageLocation = Convert_string_to_String(get_data_dir() + "\\out.png") : pic->Image = obj->Image;
 	ArrowProperities ap;
 	m.lock();
 	arrows["AB" + std::to_string(count++)] = ap;

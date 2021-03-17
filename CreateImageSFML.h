@@ -18,6 +18,8 @@ struct ArrowProperities
 	int width = 22, height = 12;
 };
 
+sf::Font LoadFontFromResource(const int ID);
 void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& curr, bool& work, sf::Mutex& m);
-void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::string name, std::string FilePath = "output.jpg"); 
+void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, 
+	std::string name, std::string FilePath = "output.jpg", size_t count = 1);
 size_t  ParserUmlAndChangeImage(std::string FilePath = "output.jpg", size_t counter = 1);
