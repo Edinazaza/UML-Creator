@@ -137,6 +137,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Constructor.cpp" />
     <ClCompile Include="ConvertFunction.cpp" />
     <ClCompile Include="CreateImageSFML.cpp" />
     <ClCompile Include="custom_class_input_form.cpp" />
@@ -148,6 +149,9 @@
     <ClCompile Include="UMLParser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Constructor.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="ConvertFunction.h" />
     <ClInclude Include="CreateImageSFML.h" />
     <ClInclude Include="custom_class_input_form.h">
@@ -166,6 +170,9 @@
     <ClInclude Include="UMLParser.h" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Constructor.resx">
+      <DependentUpon>Constructor.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="custom_class_input_form.resx">
       <DependentUpon>custom_class_input_form.h</DependentUpon>
     </EmbeddedResource>

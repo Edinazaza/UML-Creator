@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "FileWork.h"
 #include "ConvertFunction.h"
-
+#include <SFML/Graphics.hpp>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -23,13 +23,21 @@ namespace UMLCreator {
 	public ref class ResultForm : public System::Windows::Forms::Form
 	{
 	public:
-		ResultForm(void)
+		ResultForm(size_t _images_size) : images_size(_images_size)
 		{
 			InitializeComponent();
 			//
 			//TODO: äîáàâüòå êîä êîíñòðóêòîðà
 			//
 
+		}
+
+		ResultForm(void)
+		{
+			InitializeComponent();
+			//
+			//TODO: äîáàâüòå êîä êîíñòðóêòîðà
+			//
 		}
 
 	protected:
@@ -46,13 +54,16 @@ namespace UMLCreator {
 			exit(0);
 		}
 	private: System::Windows::Forms::PictureBox^ PictureResultForm;
+	private: System::ComponentModel::Container^ result_pics = gcnew System::ComponentModel::Container;
 	protected:
 
 	private: System::Windows::Forms::Button^ DownloadResultForm;
+	private: size_t images_size;
 	private: System::Windows::Forms::Button^ ChangeResultForm;
 	private: System::Windows::Forms::Button^ BackResultForm;
 	private: System::Windows::Forms::Button^ ccr;
 	private: System::Windows::Forms::RichTextBox^ RedactorResultForm;
+	private: System::Windows::Forms::Button^ constructor_button;
 
 	private:
 		/// <summary>
@@ -74,6 +85,7 @@ namespace UMLCreator {
 			this->BackResultForm = (gcnew System::Windows::Forms::Button());
 			this->ccr = (gcnew System::Windows::Forms::Button());
 			this->RedactorResultForm = (gcnew System::Windows::Forms::RichTextBox());
+			this->constructor_button = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->PictureResultForm))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -89,10 +101,10 @@ namespace UMLCreator {
 			// 
 			// DownloadResultForm
 			// 
-			this->DownloadResultForm->Location = System::Drawing::Point(683, 572);
+			this->DownloadResultForm->Location = System::Drawing::Point(545, 572);
 			this->DownloadResultForm->Margin = System::Windows::Forms::Padding(4);
 			this->DownloadResultForm->Name = L"DownloadResultForm";
-			this->DownloadResultForm->Size = System::Drawing::Size(212, 46);
+			this->DownloadResultForm->Size = System::Drawing::Size(154, 46);
 			this->DownloadResultForm->TabIndex = 2;
 			this->DownloadResultForm->Text = L"DOWNLOAD";
 			this->DownloadResultForm->UseVisualStyleBackColor = true;
@@ -100,10 +112,10 @@ namespace UMLCreator {
 			// 
 			// ChangeResultForm
 			// 
-			this->ChangeResultForm->Location = System::Drawing::Point(163, 572);
+			this->ChangeResultForm->Location = System::Drawing::Point(145, 573);
 			this->ChangeResultForm->Margin = System::Windows::Forms::Padding(4);
 			this->ChangeResultForm->Name = L"ChangeResultForm";
-			this->ChangeResultForm->Size = System::Drawing::Size(212, 46);
+			this->ChangeResultForm->Size = System::Drawing::Size(173, 46);
 			this->ChangeResultForm->TabIndex = 3;
 			this->ChangeResultForm->Text = L"CHANGE";
 			this->ChangeResultForm->UseVisualStyleBackColor = true;
@@ -122,10 +134,10 @@ namespace UMLCreator {
 			// 
 			// ccr
 			// 
-			this->ccr->Location = System::Drawing::Point(416, 572);
+			this->ccr->Location = System::Drawing::Point(358, 573);
 			this->ccr->Margin = System::Windows::Forms::Padding(4);
 			this->ccr->Name = L"ccr";
-			this->ccr->Size = System::Drawing::Size(212, 46);
+			this->ccr->Size = System::Drawing::Size(134, 46);
 			this->ccr->TabIndex = 5;
 			this->ccr->Text = L"CUSTOM CLASS READCTOR";
 			this->ccr->UseVisualStyleBackColor = true;
@@ -148,11 +160,22 @@ namespace UMLCreator {
 			}
 			ifs.close();
 			// 
+			// constructor_button
+			// 
+			this->constructor_button->Location = System::Drawing::Point(738, 573);
+			this->constructor_button->Name = L"constructor_button";
+			this->constructor_button->Size = System::Drawing::Size(130, 45);
+			this->constructor_button->TabIndex = 7;
+			this->constructor_button->Text = L"CONSTRUCTOR (pre-alfa)";
+			this->constructor_button->UseVisualStyleBackColor = true;
+			this->constructor_button->Click += gcnew System::EventHandler(this, &ResultForm::constructor_button_Click);
+			// 
 			// ResultForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1028, 629);
+			this->Controls->Add(this->constructor_button);
 			this->Controls->Add(this->RedactorResultForm);
 			this->Controls->Add(this->ccr);
 			this->Controls->Add(this->BackResultForm);
@@ -172,10 +195,10 @@ namespace UMLCreator {
 		}
 #pragma endregion
 	private: System::Void BackResultForm_Click(System::Object^ sender, System::EventArgs^ e);
-	private: System::Void RedactorResultForm_TextChanged(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void ChangeResultForm_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void PictureResultForm_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void DownloadResultForm_Click_1(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void ccr_Click(System::Object^ sender, System::EventArgs^ e);
-	};
+	private: System::Void constructor_button_Click(System::Object^ sender, System::EventArgs^ e);
+};
 }

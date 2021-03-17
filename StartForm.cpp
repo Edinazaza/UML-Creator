@@ -18,10 +18,11 @@ System::Void UMLCreator::StartForm::YourselfStartForm_Click(System::Object^ send
 	/*DC_PARSER.Parse(get_data_dir() + "\\ClassRead.txt");
 	DC_PARSER.output(get_data_dir() + "\\ParseClass.txt");*/
 	std::ifstream source(get_data_dir() + "\\ClassRead.txt");
-	parse_several_classes(source, (get_data_dir() + "\\ParseClass.txt"));
-	ParserUmlAndChangeImage(get_data_dir() + "\\output.jpg");
+	size_t counter = parse_several_classes(source, (get_data_dir() + "\\ParseClass.txt"));
 
-	ResultForm^ form = gcnew ResultForm();
+	auto res = ParserUmlAndChangeImage(get_data_dir() + "\\output.jpg", counter);
+
+	ResultForm^ form = gcnew ResultForm(res);
 	this->Hide();
 	form->Show();
 }
@@ -38,11 +39,11 @@ System::Void UMLCreator::StartForm::CreateStartForm_Click(System::Object^ sender
 	/*DC_PARSER.Parse(get_data_dir() + "\\ClassRead.txt");
 	DC_PARSER.output(get_data_dir() + "\\ParseClass.txt");*/
 	std::ifstream source(get_data_dir() + "\\ClassRead.txt");
-	parse_several_classes(source, (get_data_dir() + "\\ParseClass.txt"));
+	size_t counter = parse_several_classes(source, (get_data_dir() + "\\ParseClass.txt"));
 	
-	ParserUmlAndChangeImage(get_data_dir() + "\\output.jpg");
+	auto res = ParserUmlAndChangeImage(get_data_dir() + "\\output.jpg", counter);
 
-	ResultForm^ form = gcnew ResultForm();
+	ResultForm^ form = gcnew ResultForm(res);
 	this->Hide();
 	form->Show();
 }

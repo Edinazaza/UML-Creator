@@ -84,6 +84,7 @@ void DataCollector::define_template_type(std::ifstream& source, std::string& typ
 		if (peek_res == '>') { --bracket_count; }
 		else if (peek_res == '<') { ++bracket_count; }
 		str += peek_res;
+		if (str == "operator<<") { break; }
 	}
 	clean_from_substrs(str, "std::");
 	type = str;
@@ -403,7 +404,7 @@ size_t parse_several_classes(std::ifstream& source, const std::string& output_pa
 	{
 		item.output(count, output_path);
 	}
-	return count;
+	return --count;
 }
 
 std::string get_data_dir()

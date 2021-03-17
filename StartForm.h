@@ -67,11 +67,12 @@ namespace UMLCreator {
 			// 
 			// ClassTextStartForm
 			// 
-			this->ClassTextStartForm->Location = System::Drawing::Point(27, 35);
+			this->ClassTextStartForm->Location = System::Drawing::Point(36, 43);
+			this->ClassTextStartForm->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->ClassTextStartForm->Multiline = true;
 			this->ClassTextStartForm->Name = L"ClassTextStartForm";
 			this->ClassTextStartForm->ScrollBars = System::Windows::Forms::ScrollBars::Both;
-			this->ClassTextStartForm->Size = System::Drawing::Size(405, 404);
+			this->ClassTextStartForm->Size = System::Drawing::Size(539, 496);
 			this->ClassTextStartForm->TabIndex = 0;
 			// 
 			// label1
@@ -79,17 +80,19 @@ namespace UMLCreator {
 			this->label1->AutoSize = true;
 			this->label1->Font = (gcnew System::Drawing::Font(L"Courier New", 21.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(204)));
-			this->label1->Location = System::Drawing::Point(83, 0);
+			this->label1->Location = System::Drawing::Point(111, 0);
+			this->label1->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(287, 32);
+			this->label1->Size = System::Drawing::Size(369, 39);
 			this->label1->TabIndex = 1;
 			this->label1->Text = L"ENTER YOUR CLASS";
 			// 
 			// YourselfStartForm
 			// 
-			this->YourselfStartForm->Location = System::Drawing::Point(27, 445);
+			this->YourselfStartForm->Location = System::Drawing::Point(36, 548);
+			this->YourselfStartForm->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->YourselfStartForm->Name = L"YourselfStartForm";
-			this->YourselfStartForm->Size = System::Drawing::Size(151, 50);
+			this->YourselfStartForm->Size = System::Drawing::Size(201, 62);
 			this->YourselfStartForm->TabIndex = 2;
 			this->YourselfStartForm->Text = L"DO IT YOURSELF";
 			this->YourselfStartForm->UseVisualStyleBackColor = true;
@@ -97,9 +100,10 @@ namespace UMLCreator {
 			// 
 			// CreateStartForm
 			// 
-			this->CreateStartForm->Location = System::Drawing::Point(281, 445);
+			this->CreateStartForm->Location = System::Drawing::Point(375, 548);
+			this->CreateStartForm->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->CreateStartForm->Name = L"CreateStartForm";
-			this->CreateStartForm->Size = System::Drawing::Size(151, 50);
+			this->CreateStartForm->Size = System::Drawing::Size(201, 62);
 			this->CreateStartForm->TabIndex = 3;
 			this->CreateStartForm->Text = L"CREATE";
 			this->CreateStartForm->UseVisualStyleBackColor = true;
@@ -108,26 +112,28 @@ namespace UMLCreator {
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(155, 498);
+			this->label2->Location = System::Drawing::Point(260, 615);
+			this->label2->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(138, 13);
+			this->label2->Size = System::Drawing::Size(93, 17);
 			this->label2->TabIndex = 4;
-			this->label2->Text = L"B.Firtych and N.Krois \"Isus\"";
+			this->label2->Text = L"N.Krois \"Isus\"";
 			// 
 			// StartForm
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
+			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(459, 521);
+			this->ClientSize = System::Drawing::Size(609, 631);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->CreateStartForm);
 			this->Controls->Add(this->YourselfStartForm);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->ClassTextStartForm);
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
+			this->Margin = System::Windows::Forms::Padding(4, 4, 4, 4);
 			this->MaximizeBox = false;
-			this->MaximumSize = System::Drawing::Size(475, 560);
-			this->MinimumSize = System::Drawing::Size(475, 560);
+			this->MaximumSize = System::Drawing::Size(627, 678);
+			this->MinimumSize = System::Drawing::Size(627, 678);
 			this->Name = L"StartForm";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"UML Creator";
