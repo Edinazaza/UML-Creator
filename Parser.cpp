@@ -124,11 +124,16 @@ bool DataCollector::main_cycle_checks(std::ifstream& source, std::string& type, 
 {
 	bool clean = true;
 	//if (str == "//") { ignore_commentary(source, str, peek_res); }
-	if (types.find(str) != types.end()) { if (s || peek_res == '*') { type += (type.empty() ? "" : " ") + str; str.clear(); } }
+	if (types.find(str) != types.end()) { 
+		if (s || peek_res == '*') { type += (type.empty() ? "" : " ") + str; str.clear(); }
+		else if (peek_res == '&') {
+			type += (type.empty() ? "" : " ") + str + peek_res; str.clear(); new_char;
+		}
+	}
 	if (str == "std::") { str.clear(); }
 	if (peek_res == '<') { str += peek_res; define_template_type(source, type, str, peek_res); clean = false; }
 	if (!type.empty() && peek_res == '*') { type += "[1..*]"; new_char; clean = false; }
-	if (peek_res == '=') { new_char; clean = false; }
+	if (peek_res == '=' || isdigit(peek_res)) { new_char; clean = false; }
 	if (peek_res == '"') { ignore_string(source, peek_res); clean = false; }
 	if (peek_res == '{') { ignore_block(source, peek_res); clean = false; }
 	if (peek_res == '[')

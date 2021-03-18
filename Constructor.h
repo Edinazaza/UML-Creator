@@ -20,13 +20,13 @@ namespace UMLCreator {
 	public ref class Constructor : public System::Windows::Forms::Form
 	{
 	public:
-		Constructor(bool& _work, size_t _images_size) : work(_work), images_size(_images_size)
+		Constructor(bool& _work, size_t _images_size) : work(_work), images_size(_images_size), classes_count(_images_size)
 		{
 			InitializeComponent();
 			this->KeyDown += gcnew KeyEventHandler(this, &Constructor::key_press);
 			this->KeyPreview = true;
 			this->MouseMove += gcnew MouseEventHandler(this, &Constructor::main_form_mouse_move);
-
+			lb->Visible = false;
 			//
 			//TODO: добавьте код конструктора
 			//
@@ -47,16 +47,15 @@ namespace UMLCreator {
 		}
 
 	protected:
-
+	public: ListBox^ lb = gcnew ListBox;
 	private:
 		bool down = false, ab_resizing = false;
 		bool& work;
 		PictureBox^ buffer;
 		String^ focused_name;
 		String^ focused_label_name;
-		size_t images_size;
+		size_t images_size, classes_count;
 		System::ComponentModel::Container^ labels = gcnew System::ComponentModel::Container;
-
 		Point fixed;
 
 		size_t count = 1;
@@ -77,6 +76,8 @@ namespace UMLCreator {
 	private: System::Windows::Forms::ToolStripMenuItem^ agreagatorToolStripMenuItem;
 	private: System::Windows::Forms::Button^ add_textbox;
 	private: System::Windows::Forms::Button^ back_to_res_form;
+	private: System::Windows::Forms::Button^ add_class_diagramm;
+
 	private: System::ComponentModel::IContainer^ components;
 		   /// <summary>
 		/// Обязательная переменная конструктора.
@@ -104,13 +105,14 @@ namespace UMLCreator {
 			   this->colourToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			   this->add_textbox = (gcnew System::Windows::Forms::Button());
 			   this->back_to_res_form = (gcnew System::Windows::Forms::Button());
+			   this->add_class_diagramm = (gcnew System::Windows::Forms::Button());
 			   this->PicBoxContMenu->SuspendLayout();
 			   this->SuspendLayout();
 			   // 
 			   // add_arrow
 			   // 
 			   this->add_arrow->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
-			   this->add_arrow->Location = System::Drawing::Point(10, 338);
+			   this->add_arrow->Location = System::Drawing::Point(10, 349);
 			   this->add_arrow->Margin = System::Windows::Forms::Padding(2);
 			   this->add_arrow->Name = L"add_arrow";
 			   this->add_arrow->Size = System::Drawing::Size(94, 33);
@@ -122,7 +124,7 @@ namespace UMLCreator {
 			   // save_to_file
 			   // 
 			   this->save_to_file->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
-			   this->save_to_file->Location = System::Drawing::Point(124, 338);
+			   this->save_to_file->Location = System::Drawing::Point(117, 349);
 			   this->save_to_file->Margin = System::Windows::Forms::Padding(2);
 			   this->save_to_file->Name = L"save_to_file";
 			   this->save_to_file->Size = System::Drawing::Size(56, 34);
@@ -198,7 +200,7 @@ namespace UMLCreator {
 			   // add_textbox
 			   // 
 			   this->add_textbox->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
-			   this->add_textbox->Location = System::Drawing::Point(200, 338);
+			   this->add_textbox->Location = System::Drawing::Point(188, 349);
 			   this->add_textbox->Name = L"add_textbox";
 			   this->add_textbox->Size = System::Drawing::Size(99, 34);
 			   this->add_textbox->TabIndex = 3;
@@ -209,19 +211,33 @@ namespace UMLCreator {
 			   // back_to_res_form
 			   // 
 			   this->back_to_res_form->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
-			   this->back_to_res_form->Location = System::Drawing::Point(318, 338);
+			   this->back_to_res_form->Location = System::Drawing::Point(398, 349);
 			   this->back_to_res_form->Name = L"back_to_res_form";
-			   this->back_to_res_form->Size = System::Drawing::Size(90, 33);
+			   this->back_to_res_form->Size = System::Drawing::Size(90, 34);
 			   this->back_to_res_form->TabIndex = 4;
 			   this->back_to_res_form->Text = L"BACK";
 			   this->back_to_res_form->UseVisualStyleBackColor = true;
 			   this->back_to_res_form->Click += gcnew System::EventHandler(this, &Constructor::back_to_res_form_Click);
 			   // 
+			   // add_class_diagramm
+			   // 
+			   this->add_class_diagramm->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
+			   this->add_class_diagramm->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 6, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				   static_cast<System::Byte>(204)));
+			   this->add_class_diagramm->Location = System::Drawing::Point(302, 349);
+			   this->add_class_diagramm->Name = L"add_class_diagramm";
+			   this->add_class_diagramm->Size = System::Drawing::Size(87, 34);
+			   this->add_class_diagramm->TabIndex = 5;
+			   this->add_class_diagramm->Text = L"ADD DIAGRAMM";
+			   this->add_class_diagramm->UseVisualStyleBackColor = true;
+			   this->add_class_diagramm->Click += gcnew System::EventHandler(this, &Constructor::add_diagramm_Click);
+			   // 
 			   // Constructor
 			   // 
 			   this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			   this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			   this->ClientSize = System::Drawing::Size(470, 382);
+			   this->ClientSize = System::Drawing::Size(500, 393);
+			   this->Controls->Add(this->add_class_diagramm);
 			   this->Controls->Add(this->back_to_res_form);
 			   this->Controls->Add(this->add_textbox);
 			   this->Controls->Add(this->save_to_file);
@@ -259,6 +275,7 @@ namespace UMLCreator {
 	private: System::Void main_form_mouse_move(Object^ sender, MouseEventArgs^ args);
 
 	private: System::Void back_to_res_form_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void add_diagramm_Click(System::Object^ sender, System::EventArgs^ e);
 };
 }
 

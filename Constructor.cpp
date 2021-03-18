@@ -175,8 +175,9 @@ System::Void UMLCreator::Constructor::key_press(System::Object^ sender, KeyEvent
 
 System::Void UMLCreator::Constructor::pictureBox_Click(Object^ sender, MouseEventArgs^ args)
 {
-	if (args->Button == System::Windows::Forms::MouseButtons::Right) {
-		PictureBox^ obj = safe_cast<PictureBox^>(sender);
+	PictureBox^ obj = safe_cast<PictureBox^>(sender);
+	std::string obj_name = Convert_String_to_string(obj->Name);
+	if (args->Button == System::Windows::Forms::MouseButtons::Right && obj_name[0] == 'A' && obj_name[1] == 'B') {
 		focused_name = obj->Name;
 		m.lock();
 		curr = Convert_String_to_string(obj->Name);
@@ -188,13 +189,16 @@ System::Void UMLCreator::Constructor::pictureBox_Click(Object^ sender, MouseEven
 
 		this->PicBoxContMenu->Show(l);
 	}
-	else if (args->Button == System::Windows::Forms::MouseButtons::Left)
+	else if (args->Button == System::Windows::Forms::MouseButtons::Left && obj_name[0] == 'A' && obj_name[1] == 'B')
 	{
-		PictureBox^ obj = safe_cast<PictureBox^>(sender);
 		focused_name = obj->Name;
 		m.lock();
 		curr = Convert_String_to_string(obj->Name);
 		m.unlock();
+	}
+	else if (args->Button == System::Windows::Forms::MouseButtons::Left)
+	{
+		focused_name = obj->Name;
 	}
 }
 
@@ -245,14 +249,21 @@ System::Void UMLCreator::Constructor::create_new_pic_box(PictureBox^ pic, Pictur
 	pic->MouseUp += gcnew MouseEventHandler(this, &Constructor::pictureBox_MouseUp);
 	pic->MouseMove += gcnew MouseEventHandler(this, &Constructor::pictureBox_MouseMove);
 	pic->MouseClick += gcnew MouseEventHandler(this, &Constructor::pictureBox_Click);
-
-	pic->Name = Convert_string_to_String("AB" + std::to_string(count));
+	if (obj->Name != nullptr && Convert_String_to_string(obj->Name).find("class_box") != npos)
+	{
+		pic->Name = Convert_string_to_String("class_box" + std::to_string(++classes_count));
+	}
+	else {
+		pic->Name = Convert_string_to_String("AB" + std::to_string(count));
+	}
 	pic->BorderStyle = BorderStyle::FixedSingle;
 	obj == nullptr ? pic->ImageLocation = Convert_string_to_String(get_data_dir() + "\\out.png") : pic->Image = obj->Image;
-	ArrowProperities ap;
-	m.lock();
-	arrows["AB" + std::to_string(count++)] = ap;
-	m.unlock();
+	if (Convert_String_to_string(obj->Name).find("AB") != npos) {
+		ArrowProperities ap;
+		m.lock();
+		arrows["AB" + std::to_string(count++)] = ap;
+		m.unlock();
+	}
 }
 
 System::Void UMLCreator::Constructor::agregatorToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e)
@@ -357,7 +368,34 @@ System::Void UMLCreator::Constructor::back_to_res_form_Click(System::Object^ sen
 	work = false;
 	thread_created = false;
 	UMLCreator::ResultForm^ next = gcnew UMLCreator::ResultForm(images_size);
+	next->class_list->Items->AddRange(this->lb->Items);
+	next->class_list->Visible = true;
+	next->class_list->SetSelected(next->class_list->Items->Count - 1, true);
 	this->Hide();
 	next->Show();
 	return System::Void();
+}
+
+System::Void UMLCreator::Constructor::add_diagramm_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	std::string location = Convert_String_to_string(this->lb->SelectedItem != nullptr ? this->lb->SelectedItem->ToString() : this->lb->Items[this->lb->Items->Count - 1]->ToString());
+	size_t space_ind = location.rfind(' ') + 1;
+	location = location.substr(space_ind, location.rfind('{') - space_ind);
+	PictureBox^ pic = gcnew PictureBox;
+	pic->ImageLocation = Convert_string_to_String(location);
+	System::Drawing::Size s;
+	std::string size = Convert_String_to_string((this->lb->SelectedItem != nullptr ? this->lb->SelectedItem->ToString() : this->lb->Items[this->lb->Items->Count-1]->ToString()));
+	size = size.substr(size.rfind('{') + 1, size.size());
+	s.Width = std::stoi(size.substr(0, size.find(',')));
+	s.Height = std::stoi(size.substr(size.find(',') + 1, size.size()));
+	pic->Size = s;
+	pic->MouseDown += gcnew MouseEventHandler(this, &Constructor::pictureBox_MouseDown);
+	pic->MouseUp += gcnew MouseEventHandler(this, &Constructor::pictureBox_MouseUp);
+	pic->MouseMove += gcnew MouseEventHandler(this, &Constructor::pictureBox_MouseMove);
+	pic->MouseClick += gcnew MouseEventHandler(this, &Constructor::pictureBox_Click);
+	pic->Name = Convert_string_to_String(std::string("class_box" + std::to_string(++classes_count)));
+	pic->BorderStyle = BorderStyle::None;
+	pic->Location = Point(12, 12);
+	this->pics->Add(pic);
+	this->Controls->Add(pic);
 }

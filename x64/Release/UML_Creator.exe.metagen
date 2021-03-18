@@ -21,6 +21,7 @@ Class UMLCreator.Constructor: AutoLayout, AnsiClass, Class, Public, BeforeFieldI
   :System.Windows.Forms.Form
     Void .ctor(Boolean*, UInt64): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
   Fields:
+    System.Windows.Forms.ListBox lb : Public
     System.ComponentModel.Container pics : Public
     System.Windows.Forms.ContextMenuStrip PicBoxContMenu : Public
   Methods:
@@ -35,6 +36,11 @@ Class UMLCreator.ResultForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldIn
   :System.Windows.Forms.Form
     Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
     Void .ctor(UInt64): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+    Void .ctor(UInt64, std.vector<std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<unsigned __int64\,unsigned __int64> > >\,std::allocator<std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<unsigned __int64\,unsigned __int64> > > > >*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    System.Windows.Forms.ListBox class_list : Public
+  Methods:
+    change_class_list(vector<std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<unsigned __int64\,unsigned __int64> > >\,std::allocator<std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<unsigned __int64\,unsigned __int64> > > > >*, UInt64): PrivateScope, Public, HideBySig
 Class UMLCreator.StartForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :System.Windows.Forms.Form
     Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName

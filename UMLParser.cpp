@@ -86,7 +86,7 @@ std::vector<std::string> ParserUML::getVariables(std::ifstream& source, size_t c
 	while (true)
 	{
 		std::getline(source, line);
-		if (line == tag) { break; }
+		if (line.find(tag) != npos) { break; }
 		variables_.push_back(line);
 	}
 	return variables_;
@@ -101,7 +101,7 @@ std::vector<std::string> ParserUML::getMethod(std::ifstream& source, size_t coun
 	while (true)
 	{
 		std::getline(source, line);
-		if (line == tag) { break; }
+		if (line.find(tag) != npos) { break; }
 		methods_.push_back(line); 
 	}
 	return methods_;
@@ -111,13 +111,18 @@ std::string ParserUML::getClassName(std::ifstream& source, size_t count)
 {
 	class_name_.clear();
 	std::string line;
-	std::string tag = "</" + std::to_string(count) + "name>";
+	std::string tag = "<" + std::to_string(count) + "name>";
 	std::getline(source, line);
 	while (true)
 	{
+		if (line.find(tag) != npos) 
+		{ 
+			std::getline(source, line);
+			class_name_ += line;
+			std::getline(source, line);
+			break;
+		}
 		std::getline(source, line);
-		if (line == tag) { break; }
-		class_name_ += line;
 	}
 	return class_name_;
 }

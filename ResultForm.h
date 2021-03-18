@@ -23,13 +23,29 @@ namespace UMLCreator {
 	public ref class ResultForm : public System::Windows::Forms::Form
 	{
 	public:
+		ResultForm(size_t _images_size,
+			std::vector<std::pair<std::string, std::pair<std::string, std::pair<size_t, size_t>>>>  classes) : images_size(_images_size)
+		{
+			InitializeComponent();
+			for (auto& item : classes)
+			{
+				class_list->Items->Add(Convert_string_to_String(item.first + "                " + item.second.first
+					+ "{" + std::to_string(item.second.second.first) + "," + std::to_string(item.second.second.second) +"}"));
+			}
+		}
+
+		void change_class_list(std::vector<std::pair<std::string, std::pair<std::string, std::pair<size_t, size_t>>>> classes, size_t index)
+		{
+			class_list->Items[index]=
+				Convert_string_to_String(classes.front().first + "                " + classes.front().second.first
+					+ "{" + std::to_string(classes.front().second.second.first) + "," + 
+					std::to_string(classes.front().second.second.second) + "}");
+		}
+
 		ResultForm(size_t _images_size) : images_size(_images_size)
 		{
 			InitializeComponent();
-			//
-			//TODO: äîáàâüòå êîä êîíñòðóêòîðà
-			//
-
+			class_list->Visible = true;
 		}
 
 		ResultForm(void)
@@ -56,14 +72,16 @@ namespace UMLCreator {
 	private: System::Windows::Forms::PictureBox^ PictureResultForm;
 	private: System::ComponentModel::Container^ result_pics = gcnew System::ComponentModel::Container;
 	protected:
-
 	private: System::Windows::Forms::Button^ DownloadResultForm;
 	private: size_t images_size;
+	private: String^ text = gcnew String("");
 	private: System::Windows::Forms::Button^ ChangeResultForm;
 	private: System::Windows::Forms::Button^ BackResultForm;
 	private: System::Windows::Forms::Button^ ccr;
 	private: System::Windows::Forms::RichTextBox^ RedactorResultForm;
 	private: System::Windows::Forms::Button^ constructor_button;
+	public: ListBox^ class_list = gcnew ListBox;
+
 
 	private:
 		/// <summary>
@@ -86,25 +104,24 @@ namespace UMLCreator {
 			this->ccr = (gcnew System::Windows::Forms::Button());
 			this->RedactorResultForm = (gcnew System::Windows::Forms::RichTextBox());
 			this->constructor_button = (gcnew System::Windows::Forms::Button());
+			this->class_list = (gcnew System::Windows::Forms::ListBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->PictureResultForm))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// PictureResultForm
 			// 
-			this->PictureResultForm->Location = System::Drawing::Point(545, 15);
-			this->PictureResultForm->Margin = System::Windows::Forms::Padding(4);
+			this->PictureResultForm->Location = System::Drawing::Point(409, 12);
 			this->PictureResultForm->Name = L"PictureResultForm";
-			this->PictureResultForm->Size = System::Drawing::Size(470, 549);
+			this->PictureResultForm->Size = System::Drawing::Size(352, 446);
 			this->PictureResultForm->TabIndex = 0;
 			this->PictureResultForm->TabStop = false;
 			this->PictureResultForm->Click += gcnew System::EventHandler(this, &ResultForm::PictureResultForm_Click);
 			// 
 			// DownloadResultForm
 			// 
-			this->DownloadResultForm->Location = System::Drawing::Point(545, 572);
-			this->DownloadResultForm->Margin = System::Windows::Forms::Padding(4);
+			this->DownloadResultForm->Location = System::Drawing::Point(409, 465);
 			this->DownloadResultForm->Name = L"DownloadResultForm";
-			this->DownloadResultForm->Size = System::Drawing::Size(154, 46);
+			this->DownloadResultForm->Size = System::Drawing::Size(116, 37);
 			this->DownloadResultForm->TabIndex = 2;
 			this->DownloadResultForm->Text = L"DOWNLOAD";
 			this->DownloadResultForm->UseVisualStyleBackColor = true;
@@ -112,10 +129,9 @@ namespace UMLCreator {
 			// 
 			// ChangeResultForm
 			// 
-			this->ChangeResultForm->Location = System::Drawing::Point(145, 573);
-			this->ChangeResultForm->Margin = System::Windows::Forms::Padding(4);
+			this->ChangeResultForm->Location = System::Drawing::Point(109, 466);
 			this->ChangeResultForm->Name = L"ChangeResultForm";
-			this->ChangeResultForm->Size = System::Drawing::Size(173, 46);
+			this->ChangeResultForm->Size = System::Drawing::Size(130, 37);
 			this->ChangeResultForm->TabIndex = 3;
 			this->ChangeResultForm->Text = L"CHANGE";
 			this->ChangeResultForm->UseVisualStyleBackColor = true;
@@ -123,10 +139,9 @@ namespace UMLCreator {
 			// 
 			// BackResultForm
 			// 
-			this->BackResultForm->Location = System::Drawing::Point(47, 572);
-			this->BackResultForm->Margin = System::Windows::Forms::Padding(4);
+			this->BackResultForm->Location = System::Drawing::Point(35, 465);
 			this->BackResultForm->Name = L"BackResultForm";
-			this->BackResultForm->Size = System::Drawing::Size(64, 46);
+			this->BackResultForm->Size = System::Drawing::Size(48, 37);
 			this->BackResultForm->TabIndex = 4;
 			this->BackResultForm->Text = L"BACK";
 			this->BackResultForm->UseVisualStyleBackColor = true;
@@ -134,47 +149,66 @@ namespace UMLCreator {
 			// 
 			// ccr
 			// 
-			this->ccr->Location = System::Drawing::Point(358, 573);
-			this->ccr->Margin = System::Windows::Forms::Padding(4);
+			this->ccr->Location = System::Drawing::Point(268, 466);
 			this->ccr->Name = L"ccr";
-			this->ccr->Size = System::Drawing::Size(134, 46);
+			this->ccr->Size = System::Drawing::Size(100, 37);
 			this->ccr->TabIndex = 5;
 			this->ccr->Text = L"CUSTOM CLASS READCTOR";
 			this->ccr->UseVisualStyleBackColor = true;
 			this->ccr->Click += gcnew System::EventHandler(this, &ResultForm::ccr_Click);
-			Bitmap^ img = gcnew Bitmap(Convert_string_to_String(get_data_dir() + "\\output.jpg"));
-			this->PictureResultForm->Image = img;
+			std::string path = (get_data_dir() + "\\class_img" + std::to_string(images_size) + ".png");
+			this->PictureResultForm->ImageLocation = Convert_string_to_String(path);
 			// 
 			// RedactorResultForm
 			// 
-			this->RedactorResultForm->Location = System::Drawing::Point(47, 15);
+			this->RedactorResultForm->Location = System::Drawing::Point(35, 12);
+			this->RedactorResultForm->Margin = System::Windows::Forms::Padding(2);
 			this->RedactorResultForm->Name = L"RedactorResultForm";
-			this->RedactorResultForm->Size = System::Drawing::Size(465, 549);
+			this->RedactorResultForm->Size = System::Drawing::Size(350, 447);
 			this->RedactorResultForm->TabIndex = 6;
 			this->RedactorResultForm->Text = L"";
 			std::ifstream ifs(get_data_dir() + "\\ParseClass.txt");
 			std::string s;
 			this->RedactorResultForm->Text = L"";
+			std::string tag = "<" + std::to_string(images_size) + "name>";
+			bool is_found = false;
 			while (std::getline(ifs, s)) {
-				this->RedactorResultForm->Text += Convert_string_to_String(s) + System::Environment::NewLine;
+				text += Convert_string_to_String(s) + System::Environment::NewLine;
+				if (s == tag) { is_found = true; }
+				if (is_found) {
+					this->RedactorResultForm->Text += Convert_string_to_String(s) + System::Environment::NewLine;
+				}
 			}
 			ifs.close();
+
 			// 
 			// constructor_button
 			// 
-			this->constructor_button->Location = System::Drawing::Point(738, 573);
+			this->constructor_button->Location = System::Drawing::Point(554, 466);
+			this->constructor_button->Margin = System::Windows::Forms::Padding(2);
 			this->constructor_button->Name = L"constructor_button";
-			this->constructor_button->Size = System::Drawing::Size(130, 45);
+			this->constructor_button->Size = System::Drawing::Size(110, 37);
 			this->constructor_button->TabIndex = 7;
 			this->constructor_button->Text = L"CONSTRUCTOR (pre-alfa)";
 			this->constructor_button->UseVisualStyleBackColor = true;
 			this->constructor_button->Click += gcnew System::EventHandler(this, &ResultForm::constructor_button_Click);
 			// 
+			// class_list
+			// 
+			this->class_list->FormattingEnabled = true;
+			this->class_list->Location = System::Drawing::Point(767, 29);
+			this->class_list->MultiColumn = true;
+			this->class_list->Name = L"class_list";
+			this->class_list->Size = System::Drawing::Size(53, 121);
+			this->class_list->TabIndex = 8;
+			this->class_list->SelectedIndexChanged += gcnew System::EventHandler(this, &ResultForm::class_list_SelectedIndexChanged);
+			// 
 			// ResultForm
 			// 
-			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
+			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1028, 629);
+			this->ClientSize = System::Drawing::Size(832, 511);
+			this->Controls->Add(this->class_list);
 			this->Controls->Add(this->constructor_button);
 			this->Controls->Add(this->RedactorResultForm);
 			this->Controls->Add(this->ccr);
@@ -183,9 +217,8 @@ namespace UMLCreator {
 			this->Controls->Add(this->DownloadResultForm);
 			this->Controls->Add(this->PictureResultForm);
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^>(resources->GetObject(L"$this.Icon")));
-			this->Margin = System::Windows::Forms::Padding(4);
-			this->MaximumSize = System::Drawing::Size(1046, 676);
-			this->MinimumSize = System::Drawing::Size(1046, 676);
+			this->MaximumSize = System::Drawing::Size(850, 558);
+			this->MinimumSize = System::Drawing::Size(789, 558);
 			this->Name = L"ResultForm";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"UML Creator";
@@ -200,5 +233,6 @@ namespace UMLCreator {
 	private: System::Void DownloadResultForm_Click_1(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void ccr_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void constructor_button_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void class_list_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e);
 };
 }

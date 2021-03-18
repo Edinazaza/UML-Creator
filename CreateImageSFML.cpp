@@ -5,6 +5,7 @@
 #include <windows.h>
 #include "Parser.h"
 #include <algorithm>
+#include <filesystem>
 
 sf::Font LoadFontFromResource(const int ID)
 {
@@ -38,13 +39,14 @@ T max(T a, T_ b)
 	return b;
 }
 
-void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::string name, std::string FilePath, size_t count)
+std::pair<std::string, std::pair<std::string, std::pair<size_t, size_t>>> 
+CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::string name, std::string FilePath, size_t count)
 {
 	if (!(name.empty() && meth.empty() && var.empty())) {
 		unsigned int width = 252;
 		for (std::string& i : meth)
 		{
-			width = max(unsigned(i.size()) * 2 + 20, width);
+			width = max(unsigned(i.size()) * 5 + 20, width);
 		}
 
 		const unsigned int height = (unsigned(meth.size()) + unsigned(var.size())) * 14 + 50;
@@ -110,24 +112,28 @@ void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, st
 		// end method
 
 		renderTexture.display();
-		renderTexture.getTexture().copyToImage().saveToFile(get_data_dir() + "\\class_img" + std::to_string(count) +".png");
+		
 		auto capturedTexture = renderTexture.getTexture().copyToImage();
+		capturedTexture.saveToFile(FilePath);
 
-		if (!capturedTexture.saveToFile(FilePath)) {}
+		return { name, {FilePath, {capturedTexture.getSize().x, capturedTexture.getSize().y}} };
 	}
 }
 
-size_t ParserUmlAndChangeImage(std::string FilePath, size_t counter)
+std::pair<size_t, std::vector<std::pair<std::string, std::pair<std::string, std::pair<size_t, size_t>>>>> 
+ParserUmlAndChangeImage(size_t counter, size_t wanted_class)
 {
 	std::string filename = get_data_dir() + "\\ParseClass.txt";
 	std::ifstream source(filename);
 	ParserUML pUML;
-	size_t count = 1;
+	size_t count = wanted_class;
+	std::vector<std::pair<std::string, std::pair<std::string, std::pair<size_t, size_t>>>> classes;
 	for( ;count <= counter; ++count)
 	{
-		CreateImage(pUML.getMethod(source, count), pUML.getVariables(source, count), pUML.getClassName(source, count), FilePath, count);
+		classes.push_back(CreateImage(pUML.getMethod(source, count), pUML.getVariables(source, count), 
+			pUML.getClassName(source, count), get_data_dir() + "\\class_img" + std::to_string(count) + ".png", count));
 	}
-	return counter;
+	return { counter, classes };
 }
 
 void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& curr, bool& work,

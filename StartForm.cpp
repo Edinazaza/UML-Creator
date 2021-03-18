@@ -20,15 +20,22 @@ System::Void UMLCreator::StartForm::YourselfStartForm_Click(System::Object^ send
 	std::ifstream source(get_data_dir() + "\\ClassRead.txt");
 	size_t counter = parse_several_classes(source, (get_data_dir() + "\\ParseClass.txt"));
 
-	auto res = ParserUmlAndChangeImage(get_data_dir() + "\\output.jpg", counter);
+	auto res = ParserUmlAndChangeImage(counter);
 
-	ResultForm^ form = gcnew ResultForm(res);
+	ResultForm^ form = gcnew ResultForm(res.first, res.second);
 	this->Hide();
 	form->Show();
 }
 
 System::Void UMLCreator::StartForm::CreateStartForm_Click(System::Object^ sender, System::EventArgs^ e)
 {
+	if (ClassTextStartForm->Text->Length < 9)
+	{
+		MessageBox^ mb;
+		mb->Show(this, "Wrong input!", "Error");
+		return System::Void();
+	}
+
 	std::string str;
 	Convert_String_to_string(ClassTextStartForm->Text->ToString(), str);
 
@@ -41,9 +48,9 @@ System::Void UMLCreator::StartForm::CreateStartForm_Click(System::Object^ sender
 	std::ifstream source(get_data_dir() + "\\ClassRead.txt");
 	size_t counter = parse_several_classes(source, (get_data_dir() + "\\ParseClass.txt"));
 	
-	auto res = ParserUmlAndChangeImage(get_data_dir() + "\\output.jpg", counter);
+	auto res = ParserUmlAndChangeImage(counter);
 
-	ResultForm^ form = gcnew ResultForm(res);
+	ResultForm^ form = gcnew ResultForm(res.first, res.second);
 	this->Hide();
 	form->Show();
 }

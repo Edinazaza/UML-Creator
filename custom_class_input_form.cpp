@@ -15,9 +15,7 @@ System::Void UMLCreator::custom_class_input_form::save_CIbox_Click(System::Objec
 
 System::Void UMLCreator::custom_class_input_form::back_to_main_form_Click(System::Object^ sender, System::EventArgs^ e)
 {
-	UMLCreator::ResultForm^ next_form = gcnew UMLCreator::ResultForm();
 	this->Hide();
-	next_form->Show();
 	return System::Void();
 }
 

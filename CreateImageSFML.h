@@ -20,6 +20,10 @@ struct ArrowProperities
 
 sf::Font LoadFontFromResource(const int ID);
 void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& curr, bool& work, sf::Mutex& m);
-void CreateImage(std::vector<std::string> meth, std::vector<std::string> var, 
+
+std::pair<std::string, std::pair<std::string, std::pair<size_t, size_t>>> 
+CreateImage(std::vector<std::string> meth, std::vector<std::string> var,
 	std::string name, std::string FilePath = "output.jpg", size_t count = 1);
-size_t  ParserUmlAndChangeImage(std::string FilePath = "output.jpg", size_t counter = 1);
+
+std::pair<size_t, std::vector<std::pair<std::string, std::pair<std::string, std::pair<size_t, size_t>>>>> 
+ParserUmlAndChangeImage(size_t counter = 1, size_t wanted_class = 1);
