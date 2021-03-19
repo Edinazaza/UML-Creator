@@ -156,7 +156,25 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 			rt.setSmooth(true);
 			rt.create(l_w, l_h);
 
-			sf::RectangleShape r_3(sf::Vector2f(1.f, float(l_w - 10)));
+			if (curr_data.b == body::DOTTED_LINE) {
+				for (int i = l_w - 20; i >= 3; i -= 10)
+				{
+					sf::RectangleShape r_3(sf::Vector2f(1.f, float(5)));
+					r_3.move(float(i), 5);
+					r_3.rotate(270);
+					r_3.setFillColor(curr_data.colour);
+					rt.draw(r_3);
+				}
+			}
+			else if (curr_data.b == body::SOLID)
+			{
+				sf::RectangleShape r_3(sf::Vector2f(1.f, float(l_w - 10)));
+				r_3.move(0, 5);
+				r_3.rotate(270);
+				r_3.setFillColor(curr_data.colour);
+
+				rt.draw(r_3);
+			}
 
 			if (curr_data.h == head::ARROW) {
 				sf::RectangleShape r_1(sf::Vector2f(1.f, 5.f));
@@ -173,7 +191,6 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 
 			if (curr_data.h == head::AGREGATION)
 			{
-				r_3.setSize(sf::Vector2f(1.f, float(l_w - 15)));
 				sf::RectangleShape r_p_1(sf::Vector2f(1.f, 8.f));
 				sf::RectangleShape r_p_2(sf::Vector2f(1.f, 8.f));
 				sf::RectangleShape r_p_3(sf::Vector2f(1.f, 8.f));
@@ -202,17 +219,24 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 
 			if (l_h > 10)
 			{
-				sf::RectangleShape r_4((sf::Vector2f(1.f, float(l_h - 10))));
-				r_4.move(0, 5);
-				r_4.setFillColor(curr_data.colour);
-				rt.draw(r_4);
+				if (curr_data.b == body::SOLID) {
+					sf::RectangleShape r_4((sf::Vector2f(1.f, float(l_h - 10))));
+					r_4.move(0, 5);
+					r_4.setFillColor(curr_data.colour);
+					rt.draw(r_4);
+				}
+				else if (curr_data.b == body::DOTTED_LINE)
+				{
+					for (int i = l_h - 10; i >= 3; i -= 10)
+					{
+						sf::RectangleShape r_4(sf::Vector2f(1.f, float(5)));
+						r_4.move(0, float(i));
+						r_4.setFillColor(curr_data.colour);
+						rt.draw(r_4);
+					}
+				}
 			}
 
-			r_3.move(0, 5);
-			r_3.rotate(270);
-			r_3.setFillColor(curr_data.colour);
-
-			rt.draw(r_3);
 			m.lock();
 			rt.getTexture().copyToImage().saveToFile((get_data_dir() + "\\out.png"));
 			m.unlock();

@@ -11,9 +11,16 @@ enum class head
 	AGREGATION
 };
 
+enum class body
+{
+	SOLID,
+	DOTTED_LINE
+};
+
 struct ArrowProperities
 {
 	head h = head::ARROW;
+	body b = body::SOLID;
 	sf::Color colour = sf::Color::Black;
 	int width = 22, height = 12;
 };

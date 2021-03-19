@@ -249,7 +249,7 @@ System::Void UMLCreator::Constructor::create_new_pic_box(PictureBox^ pic, Pictur
 	pic->MouseUp += gcnew MouseEventHandler(this, &Constructor::pictureBox_MouseUp);
 	pic->MouseMove += gcnew MouseEventHandler(this, &Constructor::pictureBox_MouseMove);
 	pic->MouseClick += gcnew MouseEventHandler(this, &Constructor::pictureBox_Click);
-	if (obj->Name != nullptr && Convert_String_to_string(obj->Name).find("class_box") != npos)
+	if (obj != nullptr && Convert_String_to_string(obj->Name).find("class_box") != npos)
 	{
 		pic->Name = Convert_string_to_String("class_box" + std::to_string(++classes_count));
 	}
@@ -258,11 +258,18 @@ System::Void UMLCreator::Constructor::create_new_pic_box(PictureBox^ pic, Pictur
 	}
 	pic->BorderStyle = BorderStyle::FixedSingle;
 	obj == nullptr ? pic->ImageLocation = Convert_string_to_String(get_data_dir() + "\\out.png") : pic->Image = obj->Image;
-	if (Convert_String_to_string(obj->Name).find("AB") != npos) {
-		ArrowProperities ap;
-		m.lock();
-		arrows["AB" + std::to_string(count++)] = ap;
-		m.unlock();
+	if (Convert_String_to_string(pic->Name).find("AB") != npos) {
+		if (obj == nullptr) {
+			ArrowProperities ap;
+			m.lock();
+			arrows["AB" + std::to_string(count++)] = ap;
+			m.unlock();
+		}
+		else {
+			m.lock();
+			arrows["AB" + std::to_string(count++)] = arrows.find(Convert_String_to_string(obj->Name))->second;
+			m.unlock();
+		}
 	}
 }
 
@@ -287,6 +294,32 @@ System::Void UMLCreator::Constructor::classicToolStripMenuItem_Click(System::Obj
 		if (obj->Name == focused_name)
 		{
 			arrows[Convert_String_to_string(obj->Name)].h = head::ARROW;
+			break;
+		}
+	}
+}
+
+System::Void UMLCreator::Constructor::solidToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	for (size_t i = 0; i < pics->Components->Count; ++i)
+	{
+		PictureBox^ obj = safe_cast<PictureBox^>(pics->Components[i]);
+		if (obj->Name == focused_name)
+		{
+			arrows[Convert_String_to_string(obj->Name)].b = body::SOLID;
+			break;
+		}
+	}
+}
+
+System::Void UMLCreator::Constructor::dottedLineToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	for (size_t i = 0; i < pics->Components->Count; ++i)
+	{
+		PictureBox^ obj = safe_cast<PictureBox^>(pics->Components[i]);
+		if (obj->Name == focused_name)
+		{
+			arrows[Convert_String_to_string(obj->Name)].b = body::DOTTED_LINE;
 			break;
 		}
 	}

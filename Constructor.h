@@ -77,6 +77,9 @@ namespace UMLCreator {
 	private: System::Windows::Forms::Button^ add_textbox;
 	private: System::Windows::Forms::Button^ back_to_res_form;
 	private: System::Windows::Forms::Button^ add_class_diagramm;
+	private: System::Windows::Forms::ToolStripMenuItem^ bodyToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^ solidToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^ dottedLineToolStripMenuItem;
 
 	private: System::ComponentModel::IContainer^ components;
 		   /// <summary>
@@ -103,6 +106,9 @@ namespace UMLCreator {
 			   this->classicToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			   this->agreagatorToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			   this->colourToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			   this->bodyToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			   this->solidToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			   this->dottedLineToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			   this->add_textbox = (gcnew System::Windows::Forms::Button());
 			   this->back_to_res_form = (gcnew System::Windows::Forms::Button());
 			   this->add_class_diagramm = (gcnew System::Windows::Forms::Button());
@@ -141,30 +147,30 @@ namespace UMLCreator {
 					   this->deleteToolStripMenuItem, this->formatToolStripMenuItem
 			   });
 			   this->PicBoxContMenu->Name = L"PicBoxContMenu";
-			   this->PicBoxContMenu->Size = System::Drawing::Size(126, 76);
+			   this->PicBoxContMenu->Size = System::Drawing::Size(211, 104);
 			   // 
 			   // rotateToolStripMenuItem
 			   // 
 			   this->rotateToolStripMenuItem->Name = L"rotateToolStripMenuItem";
-			   this->rotateToolStripMenuItem->Size = System::Drawing::Size(125, 24);
+			   this->rotateToolStripMenuItem->Size = System::Drawing::Size(210, 24);
 			   this->rotateToolStripMenuItem->Text = L"Rotate";
 			   this->rotateToolStripMenuItem->Click += gcnew System::EventHandler(this, &Constructor::rotateToolStripMenuItem_Click);
 			   // 
 			   // deleteToolStripMenuItem
 			   // 
 			   this->deleteToolStripMenuItem->Name = L"deleteToolStripMenuItem";
-			   this->deleteToolStripMenuItem->Size = System::Drawing::Size(125, 24);
+			   this->deleteToolStripMenuItem->Size = System::Drawing::Size(210, 24);
 			   this->deleteToolStripMenuItem->Text = L"Delete";
 			   this->deleteToolStripMenuItem->Click += gcnew System::EventHandler(this, &Constructor::deleteToolStripMenuItem_Click);
 			   // 
 			   // formatToolStripMenuItem
 			   // 
-			   this->formatToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+			   this->formatToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {
 				   this->headToolStripMenuItem,
-					   this->colourToolStripMenuItem
+					   this->colourToolStripMenuItem, this->bodyToolStripMenuItem
 			   });
 			   this->formatToolStripMenuItem->Name = L"formatToolStripMenuItem";
-			   this->formatToolStripMenuItem->Size = System::Drawing::Size(125, 24);
+			   this->formatToolStripMenuItem->Size = System::Drawing::Size(210, 24);
 			   this->formatToolStripMenuItem->Text = L"Format";
 			   // 
 			   // headToolStripMenuItem
@@ -174,28 +180,52 @@ namespace UMLCreator {
 					   this->agreagatorToolStripMenuItem
 			   });
 			   this->headToolStripMenuItem->Name = L"headToolStripMenuItem";
-			   this->headToolStripMenuItem->Size = System::Drawing::Size(136, 26);
+			   this->headToolStripMenuItem->Size = System::Drawing::Size(224, 26);
 			   this->headToolStripMenuItem->Text = L"Head";
 			   // 
 			   // classicToolStripMenuItem
 			   // 
 			   this->classicToolStripMenuItem->Name = L"classicToolStripMenuItem";
-			   this->classicToolStripMenuItem->Size = System::Drawing::Size(168, 26);
+			   this->classicToolStripMenuItem->Size = System::Drawing::Size(224, 26);
 			   this->classicToolStripMenuItem->Text = L"Classic";
 			   this->classicToolStripMenuItem->Click += gcnew System::EventHandler(this, &Constructor::classicToolStripMenuItem_Click);
 			   // 
 			   // agreagatorToolStripMenuItem
 			   // 
 			   this->agreagatorToolStripMenuItem->Name = L"agreagatorToolStripMenuItem";
-			   this->agreagatorToolStripMenuItem->Size = System::Drawing::Size(168, 26);
+			   this->agreagatorToolStripMenuItem->Size = System::Drawing::Size(224, 26);
 			   this->agreagatorToolStripMenuItem->Text = L"Agreagator";
 			   this->agreagatorToolStripMenuItem->Click += gcnew System::EventHandler(this, &Constructor::agregatorToolStripMenuItem_Click);
 			   // 
 			   // colourToolStripMenuItem
 			   // 
 			   this->colourToolStripMenuItem->Name = L"colourToolStripMenuItem";
-			   this->colourToolStripMenuItem->Size = System::Drawing::Size(136, 26);
+			   this->colourToolStripMenuItem->Size = System::Drawing::Size(224, 26);
 			   this->colourToolStripMenuItem->Text = L"Colour";
+			   // 
+			   // bodyToolStripMenuItem
+			   // 
+			   this->bodyToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+				   this->solidToolStripMenuItem,
+					   this->dottedLineToolStripMenuItem
+			   });
+			   this->bodyToolStripMenuItem->Name = L"bodyToolStripMenuItem";
+			   this->bodyToolStripMenuItem->Size = System::Drawing::Size(224, 26);
+			   this->bodyToolStripMenuItem->Text = L"Body";
+			   // 
+			   // solidToolStripMenuItem
+			   // 
+			   this->solidToolStripMenuItem->Name = L"solidToolStripMenuItem";
+			   this->solidToolStripMenuItem->Size = System::Drawing::Size(224, 26);
+			   this->solidToolStripMenuItem->Text = L"Solid";
+			   this->solidToolStripMenuItem->Click += gcnew System::EventHandler(this, &Constructor::solidToolStripMenuItem_Click);
+			   // 
+			   // dottedLineToolStripMenuItem
+			   // 
+			   this->dottedLineToolStripMenuItem->Name = L"dottedLineToolStripMenuItem";
+			   this->dottedLineToolStripMenuItem->Size = System::Drawing::Size(224, 26);
+			   this->dottedLineToolStripMenuItem->Text = L"Dotted line";
+			   this->dottedLineToolStripMenuItem->Click += gcnew System::EventHandler(this, &Constructor::dottedLineToolStripMenuItem_Click);
 			   // 
 			   // add_textbox
 			   // 
@@ -265,6 +295,8 @@ namespace UMLCreator {
 	private: System::Void deleteToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void agregatorToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void classicToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void solidToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void dottedLineToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
 
 	private: System::Void create_new_pic_box(PictureBox^ pic, PictureBox^ obj);
 
