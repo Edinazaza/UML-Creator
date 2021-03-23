@@ -36,22 +36,41 @@ System::Void UMLCreator::Constructor::pictureBox_MouseMove(Object^ sender, Mouse
 	p.Y -= this->Location.Y;
 
 
-	if (obj->Name[0] == 'A' && obj->Name[1] == 'B' && ((p.X < (obj->Location.X + obj->Width + 1) && p.X >(obj->Location.X + obj->Width - 6)) &&
-		(p.Y < (obj->Location.Y + obj->Height + 29) && p.Y >(obj->Location.Y + obj->Height + 22))) || ab_resizing)
+	if ((obj->Name[0] == 'A' && obj->Name[1] == 'B' && ((p.X < (obj->Location.X + obj->Width + 1) && p.X >(obj->Location.X + obj->Width - 6)) &&
+		(p.Y < (obj->Location.Y + obj->Height + 29) && p.Y >(obj->Location.Y + obj->Height + 22))) || ab_resizing) && !moving)
 	{
 		Cursor->Current = Cursors::SizeAll;
 		if (down)
 		{
 			ab_resizing = true;
 			m.lock();
-			obj->Width = arrows[curr].width = Cursor->Position.X - this->Location.X - obj->Location.X;
-			obj->Height = arrows[curr].height = Cursor->Position.Y - this->Location.Y - obj->Location.Y - 25;
+			auto current = arrows[curr];
+
+			obj->Width = arrows[curr].horizontal = Cursor->Position.X - this->Location.X - obj->Location.X;
+
+			if (current.horizontal > 20)
+			{
+				obj->Height = Cursor->Position.Y - this->Location.Y - obj->Location.Y - 25;
+				if ((obj->Height < current.vertical_a + current.vertical_b) && current.vertical_b < 10)
+				{
+					arrows[curr].vertical_a = obj->Height - 10;
+				}
+				arrows[curr].vertical_b = obj->Height - current.vertical_a;
+
+			}
+			else
+			{
+				arrows[curr].vertical_b = 0;
+				obj->Height = Cursor->Position.Y - this->Location.Y - obj->Location.Y - 25;
+				arrows[curr].vertical_a = obj->Height - 10;
+			}
 			m.unlock();
 		}
 	}
 
 	if (down && !ab_resizing)
 	{
+		moving = true;
 		p.X -= fixed.X;
 		p.Y -= fixed.Y;
 		obj->Location = p;
@@ -69,6 +88,7 @@ System::Void UMLCreator::Constructor::pictureBox_MouseUp(Object^ sender, MouseEv
 	}
 	down = false;
 	ab_resizing = false;
+	moving = false;
 }
 
 System::Void UMLCreator::Constructor::add_arrow_Click(System::Object^ sender, System::EventArgs^ e)
@@ -257,7 +277,7 @@ System::Void UMLCreator::Constructor::create_new_pic_box(PictureBox^ pic, Pictur
 		pic->Name = Convert_string_to_String("AB" + std::to_string(count));
 	}
 	pic->BorderStyle = BorderStyle::FixedSingle;
-	obj == nullptr ? pic->ImageLocation = Convert_string_to_String(get_data_dir() + "\\out.png") : pic->Image = obj->Image;
+	obj == nullptr ? pic->ImageLocation = Convert_string_to_String(get_data_dir() + "\\arrow_sample.png") : pic->Image = obj->Image;
 	if (Convert_String_to_string(pic->Name).find("AB") != npos) {
 		if (obj == nullptr) {
 			ArrowProperities ap;
@@ -299,6 +319,32 @@ System::Void UMLCreator::Constructor::classicToolStripMenuItem_Click(System::Obj
 	}
 }
 
+System::Void UMLCreator::Constructor::compositionToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	for (size_t i = 0; i < pics->Components->Count; ++i)
+	{
+		PictureBox^ obj = safe_cast<PictureBox^>(pics->Components[i]);
+		if (obj->Name == focused_name)
+		{
+			arrows[Convert_String_to_string(obj->Name)].h = head::COMPOSITION;
+			break;
+		}
+	}
+}
+
+System::Void UMLCreator::Constructor::inheritanceToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	for (size_t i = 0; i < pics->Components->Count; ++i)
+	{
+		PictureBox^ obj = safe_cast<PictureBox^>(pics->Components[i]);
+		if (obj->Name == focused_name)
+		{
+			arrows[Convert_String_to_string(obj->Name)].h = head::INHERITANCE;
+			break;
+		}
+	}
+}
+
 System::Void UMLCreator::Constructor::solidToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e)
 {
 	for (size_t i = 0; i < pics->Components->Count; ++i)
@@ -323,6 +369,7 @@ System::Void UMLCreator::Constructor::dottedLineToolStripMenuItem_Click(System::
 			break;
 		}
 	}
+
 }
 
 System::Void UMLCreator::Constructor::add_textbox_Click(System::Object^ sender, System::EventArgs^ e)
@@ -354,6 +401,7 @@ System::Void UMLCreator::Constructor::textBox_MouseDown(Object^ sender, MouseEve
 System::Void UMLCreator::Constructor::textBox_MouseUp(Object^ sender, MouseEventArgs^ args)
 {
 	down = false;
+	moving = false;
 	ab_resizing = false;
 }
 
@@ -366,8 +414,8 @@ System::Void UMLCreator::Constructor::textBox_MouseMove(Object^ sender, MouseEve
 	p.X -= this->Location.X;
 	p.Y -= this->Location.Y;
 
-	if (obj->Name[0] == 'L' && obj->Name[1] == 'B' && (p.X < (obj->Location.X + obj->Width + 1) && p.X >(obj->Location.X + obj->Width - 6))
-		|| ab_resizing)
+	if ((obj->Name[0] == 'L' && obj->Name[1] == 'B' && (p.X < (obj->Location.X + obj->Width + 1) && p.X >(obj->Location.X + obj->Width - 6))
+		|| ab_resizing) && !moving)
 	{
 		Cursor->Current = Cursors::VSplit;
 		if (down)
@@ -380,6 +428,7 @@ System::Void UMLCreator::Constructor::textBox_MouseMove(Object^ sender, MouseEve
 
 	if (down && !ab_resizing)
 	{
+		moving = true;
 		p.X -= fixed.X;
 		p.Y -= fixed.Y;
 		obj->Location = p;

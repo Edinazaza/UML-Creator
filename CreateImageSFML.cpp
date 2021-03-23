@@ -147,20 +147,43 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 		m.lock();
 		auto c = arrows.find(curr);
 		m.unlock();
-		if (!arrows.empty() && c != arrows.end() && (l_w != c->second.width || l_h != c->second.height)) {
+		if (!arrows.empty() && c != arrows.end() && (l_w != c->second.horizontal || l_h != (c->second.vertical_a + c->second.vertical_b))) {
 			ArrowProperities curr_data = c->second;
-			l_w = curr_data.width;
-			l_h = curr_data.height;
+			l_w = curr_data.horizontal;
+			l_h = (curr_data.vertical_a + curr_data.vertical_b);
 
 			sf::RenderTexture rt;
 			rt.setSmooth(true);
 			rt.create(l_w, l_h);
 
-			if (curr_data.b == body::DOTTED_LINE) {
-				for (int i = l_w - 20; i >= 3; i -= 10)
+			size_t ver_a_counter = 0;
+			size_t ver_b_counter = 0;
+			size_t hor_counter = 0;
+
+			if (curr_data.b == body::DOTTED_LINE)
+			{
+
+				for (int i = l_h - 20; i >= l_h - curr_data.vertical_a - 5; i -= 10)
 				{
+					++ver_a_counter;
+					sf::RectangleShape r_4(sf::Vector2f(1.f, float(5)));
+					r_4.move(float(10), float(i));
+					r_4.setFillColor(curr_data.colour);
+					rt.draw(r_4);
+				}
+				for (int i = l_h - curr_data.vertical_a - 10; i >= 5; i -= 10)
+				{
+					++ver_b_counter;
 					sf::RectangleShape r_3(sf::Vector2f(1.f, float(5)));
-					r_3.move(float(i), 5);
+					r_3.move(float(l_w - 10), float(i));
+					r_3.setFillColor(curr_data.colour);
+					rt.draw(r_3);
+				}
+				for (int i = l_w - 20; i >= 10; i -= 10)
+				{
+					++hor_counter;
+					sf::RectangleShape r_3(sf::Vector2f(1.f, float(5)));
+					r_3.move(float(i), float(l_h - curr_data.vertical_a - 5));
 					r_3.rotate(270);
 					r_3.setFillColor(curr_data.colour);
 					rt.draw(r_3);
@@ -168,73 +191,124 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 			}
 			else if (curr_data.b == body::SOLID)
 			{
-				sf::RectangleShape r_3(sf::Vector2f(1.f, float(l_w - 10)));
-				r_3.move(0, 5);
-				r_3.rotate(270);
-				r_3.setFillColor(curr_data.colour);
+				if (curr_data.horizontal > 20)
+				{
+					++hor_counter;
+					sf::RectangleShape r_4((sf::Vector2f(1.f, float(l_w - ((curr_data.h == head::ARROW || curr_data.vertical_b > 20) ? 20 : 25)))));
+					r_4.move(float(10), float(curr_data.vertical_b - 5));
+					r_4.setFillColor(curr_data.colour);
+					r_4.rotate(270);
+					rt.draw(r_4);
+				}
 
-				rt.draw(r_3);
+				if (curr_data.vertical_b > 20)
+				{
+					++ver_b_counter;
+					sf::RectangleShape r_3(sf::Vector2f(1.f, float(curr_data.vertical_b - (curr_data.h == head::ARROW ? 10 : 22))));
+					r_3.move(float(l_w - 10), float(curr_data.h == head::ARROW ? 5 : 17));
+					r_3.setFillColor(curr_data.colour);
+					rt.draw(r_3);
+				}
+
+				if (curr_data.vertical_a > 10) {
+					++ver_a_counter;
+					sf::RectangleShape r_3(sf::Vector2f(1.f, float(curr_data.vertical_a - ((curr_data.h == head::ARROW || ver_b_counter > 0 || hor_counter > 0) ? 5 : 17))));
+					r_3.move(float(10), float(l_h - curr_data.vertical_a - ((curr_data.h == head::ARROW || ver_b_counter > 0 || hor_counter > 0) ? 5 : -11)));
+					r_3.setFillColor(curr_data.colour);
+					rt.draw(r_3);
+				}
 			}
 
 			if (curr_data.h == head::ARROW) {
 				sf::RectangleShape r_1(sf::Vector2f(1.f, 5.f));
 				sf::RectangleShape r_2(sf::Vector2f(1.f, 5.f));
-				r_1.move(float(l_w - 10), float(4));
-				r_1.rotate(45);
-				r_2.move(float(l_w - 10), float(4));
-				r_2.rotate(135);
+
+				if (ver_b_counter > 0) {
+					r_1.move(float(l_w - 10), float(4));
+					r_1.rotate(45);
+					r_2.move(float(l_w - 10), float(4));
+					r_2.rotate(315);
+				}
+				else if (hor_counter > 0)
+				{
+					r_1.move(float(l_w - 10), float(l_h - curr_data.vertical_a - 6));
+					r_1.rotate(45);
+					r_2.move(float(l_w - 10), float(l_h - curr_data.vertical_a - 6));
+					r_2.rotate(135);
+				}
+				else
+				{
+					r_1.move(float(10), float(0));
+					r_1.rotate(45);
+					r_2.move(float(10), float(0));
+					r_2.rotate(315);
+				}
+
 				r_1.setFillColor(curr_data.colour);
 				r_2.setFillColor(curr_data.colour);
 				rt.draw(r_1);
 				rt.draw(r_2);
 			}
 
-			if (curr_data.h == head::AGREGATION)
+			if (curr_data.h == head::AGREGATION || curr_data.h == head::COMPOSITION)
 			{
-				sf::RectangleShape r_p_1(sf::Vector2f(1.f, 8.f));
-				sf::RectangleShape r_p_2(sf::Vector2f(1.f, 8.f));
-				sf::RectangleShape r_p_3(sf::Vector2f(1.f, 8.f));
-				sf::RectangleShape r_p_4(sf::Vector2f(1.f, 8.f));
+				//r_3.setSize(sf::Vector2f(1.f, float(l_w - 15)));
+				sf::ConvexShape rhombus;
+				rhombus.setPointCount(4);
+				rhombus.setPoint(0, sf::Vector2f(0, 4));
+				rhombus.setPoint(1, sf::Vector2f(6, 0));
+				rhombus.setPoint(2, sf::Vector2f(12, 4));
+				rhombus.setPoint(3, sf::Vector2f(6, 8));
+				rhombus.setOutlineThickness(1);
+				rhombus.setOutlineColor(curr_data.colour);
+				rhombus.setFillColor((curr_data.h == head::AGREGATION ? sf::Color::White : sf::Color::Black));
 
-				r_p_1.setFillColor(curr_data.colour);
-				r_p_2.setFillColor(curr_data.colour);
-				r_p_3.setFillColor(curr_data.colour);
-				r_p_4.setFillColor(curr_data.colour);
+				if (ver_b_counter > 0)
+				{
+					rhombus.rotate(90);
+					rhombus.move(float(l_w - 6), float(4));
+				}
+				else if (hor_counter > 0)
+				{
+					rhombus.move(float(l_w - 15), float(l_h - curr_data.vertical_a - 10));
+				}
+				else
+				{
+					rhombus.rotate(90);
+					rhombus.move(float(14), float(1));
+				}
 
-				r_p_1.move(float(l_w - 15), float(5));
-				r_p_2.move(float(l_w - 15), float(5));
-				r_p_3.move(float(l_w - 8), float(8));
-				r_p_4.move(float(l_w - 8), float(2));
-
-				r_p_1.rotate(295);
-				r_p_2.rotate(245);
-				r_p_3.rotate(245);
-				r_p_4.rotate(295);
-
-				rt.draw(r_p_1);
-				rt.draw(r_p_2);
-				rt.draw(r_p_3);
-				rt.draw(r_p_4);
+				rt.draw(rhombus);
 			}
 
-			if (l_h > 10)
+			if (curr_data.h == head::INHERITANCE)
 			{
-				if (curr_data.b == body::SOLID) {
-					sf::RectangleShape r_4((sf::Vector2f(1.f, float(l_h - 10))));
-					r_4.move(0, 5);
-					r_4.setFillColor(curr_data.colour);
-					rt.draw(r_4);
-				}
-				else if (curr_data.b == body::DOTTED_LINE)
+				sf::ConvexShape triangle;
+
+				triangle.setPointCount(3);
+				triangle.setPoint(0, sf::Vector2f(0, 0));
+				triangle.setPoint(1, sf::Vector2f(0, 9));
+				triangle.setPoint(2, sf::Vector2f(10, 5));
+
+				triangle.setOutlineThickness(1);
+				triangle.setOutlineColor(sf::Color::Black);
+
+				if (ver_b_counter > 0)
 				{
-					for (int i = l_h - 10; i >= 3; i -= 10)
-					{
-						sf::RectangleShape r_4(sf::Vector2f(1.f, float(5)));
-						r_4.move(0, float(i));
-						r_4.setFillColor(curr_data.colour);
-						rt.draw(r_4);
-					}
+					triangle.rotate(270);
+					triangle.move(float(l_w - 14), float(16));
 				}
+				else if (hor_counter > 0)
+				{
+					triangle.move(float(l_w - 15), float(l_h - curr_data.vertical_a - 10));
+				}
+				else
+				{
+					triangle.rotate(270);
+					triangle.move(float(6), float(10));
+				}
+
+				rt.draw(triangle);
 			}
 
 			m.lock();
@@ -244,3 +318,24 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 	}
 }
 
+void create_default_arrow()
+{
+	sf::RenderTexture rt;
+	rt.create(22, 10);
+	sf::RectangleShape r_3(sf::Vector2f(1.f, float(12)));
+	r_3.move(0, 5);
+	r_3.rotate(270);
+	r_3.setFillColor(sf::Color::Black);
+	rt.draw(r_3);
+	sf::RectangleShape r_1(sf::Vector2f(1.f, 5.f));
+	sf::RectangleShape r_2(sf::Vector2f(1.f, 5.f));
+	r_1.move(float(12), float(4));
+	r_1.rotate(45);
+	r_2.move(float(12), float(4));
+	r_2.rotate(135);
+	r_1.setFillColor(sf::Color::Black);
+	r_2.setFillColor(sf::Color::Black);
+	rt.draw(r_1);
+	rt.draw(r_2);
+	rt.getTexture().copyToImage().saveToFile((get_data_dir() + "\\arrow_sample.png"));
+}

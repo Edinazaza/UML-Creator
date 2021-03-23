@@ -49,7 +49,7 @@ namespace UMLCreator {
 	protected:
 	public: ListBox^ lb = gcnew ListBox;
 	private:
-		bool down = false, ab_resizing = false;
+		bool down = false, ab_resizing = false, moving = false;;
 		bool& work;
 		PictureBox^ buffer;
 		String^ focused_name;
@@ -80,6 +80,8 @@ namespace UMLCreator {
 	private: System::Windows::Forms::ToolStripMenuItem^ bodyToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^ solidToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^ dottedLineToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^ inheritanceToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^ compositionToolStripMenuItem;
 
 	private: System::ComponentModel::IContainer^ components;
 		   /// <summary>
@@ -105,6 +107,8 @@ namespace UMLCreator {
 			   this->headToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			   this->classicToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			   this->agreagatorToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			   this->inheritanceToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			   this->compositionToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			   this->colourToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			   this->bodyToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			   this->solidToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -147,19 +151,19 @@ namespace UMLCreator {
 					   this->deleteToolStripMenuItem, this->formatToolStripMenuItem
 			   });
 			   this->PicBoxContMenu->Name = L"PicBoxContMenu";
-			   this->PicBoxContMenu->Size = System::Drawing::Size(211, 104);
+			   this->PicBoxContMenu->Size = System::Drawing::Size(126, 76);
 			   // 
 			   // rotateToolStripMenuItem
 			   // 
 			   this->rotateToolStripMenuItem->Name = L"rotateToolStripMenuItem";
-			   this->rotateToolStripMenuItem->Size = System::Drawing::Size(210, 24);
+			   this->rotateToolStripMenuItem->Size = System::Drawing::Size(125, 24);
 			   this->rotateToolStripMenuItem->Text = L"Rotate";
 			   this->rotateToolStripMenuItem->Click += gcnew System::EventHandler(this, &Constructor::rotateToolStripMenuItem_Click);
 			   // 
 			   // deleteToolStripMenuItem
 			   // 
 			   this->deleteToolStripMenuItem->Name = L"deleteToolStripMenuItem";
-			   this->deleteToolStripMenuItem->Size = System::Drawing::Size(210, 24);
+			   this->deleteToolStripMenuItem->Size = System::Drawing::Size(125, 24);
 			   this->deleteToolStripMenuItem->Text = L"Delete";
 			   this->deleteToolStripMenuItem->Click += gcnew System::EventHandler(this, &Constructor::deleteToolStripMenuItem_Click);
 			   // 
@@ -170,14 +174,14 @@ namespace UMLCreator {
 					   this->colourToolStripMenuItem, this->bodyToolStripMenuItem
 			   });
 			   this->formatToolStripMenuItem->Name = L"formatToolStripMenuItem";
-			   this->formatToolStripMenuItem->Size = System::Drawing::Size(210, 24);
+			   this->formatToolStripMenuItem->Size = System::Drawing::Size(125, 24);
 			   this->formatToolStripMenuItem->Text = L"Format";
 			   // 
 			   // headToolStripMenuItem
 			   // 
-			   this->headToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {
+			   this->headToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {
 				   this->classicToolStripMenuItem,
-					   this->agreagatorToolStripMenuItem
+					   this->agreagatorToolStripMenuItem, this->inheritanceToolStripMenuItem, this->compositionToolStripMenuItem
 			   });
 			   this->headToolStripMenuItem->Name = L"headToolStripMenuItem";
 			   this->headToolStripMenuItem->Size = System::Drawing::Size(224, 26);
@@ -185,6 +189,7 @@ namespace UMLCreator {
 			   // 
 			   // classicToolStripMenuItem
 			   // 
+			   this->classicToolStripMenuItem->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"classicToolStripMenuItem.Image")));
 			   this->classicToolStripMenuItem->Name = L"classicToolStripMenuItem";
 			   this->classicToolStripMenuItem->Size = System::Drawing::Size(224, 26);
 			   this->classicToolStripMenuItem->Text = L"Classic";
@@ -192,10 +197,27 @@ namespace UMLCreator {
 			   // 
 			   // agreagatorToolStripMenuItem
 			   // 
+			   this->agreagatorToolStripMenuItem->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"agreagatorToolStripMenuItem.Image")));
 			   this->agreagatorToolStripMenuItem->Name = L"agreagatorToolStripMenuItem";
 			   this->agreagatorToolStripMenuItem->Size = System::Drawing::Size(224, 26);
 			   this->agreagatorToolStripMenuItem->Text = L"Agreagator";
 			   this->agreagatorToolStripMenuItem->Click += gcnew System::EventHandler(this, &Constructor::agregatorToolStripMenuItem_Click);
+			   // 
+			   // inheritanceToolStripMenuItem
+			   // 
+			   this->inheritanceToolStripMenuItem->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"inheritanceToolStripMenuItem.Image")));
+			   this->inheritanceToolStripMenuItem->Name = L"inheritanceToolStripMenuItem";
+			   this->inheritanceToolStripMenuItem->Size = System::Drawing::Size(224, 26);
+			   this->inheritanceToolStripMenuItem->Text = L"Inheritance";
+			   this->inheritanceToolStripMenuItem->Click += gcnew System::EventHandler(this, &Constructor::inheritanceToolStripMenuItem_Click);
+			   // 
+			   // compositionToolStripMenuItem
+			   // 
+			   this->compositionToolStripMenuItem->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"compositionToolStripMenuItem.Image")));
+			   this->compositionToolStripMenuItem->Name = L"compositionToolStripMenuItem";
+			   this->compositionToolStripMenuItem->Size = System::Drawing::Size(224, 26);
+			   this->compositionToolStripMenuItem->Text = L"Copmosition";
+			   this->compositionToolStripMenuItem->Click += gcnew System::EventHandler(this, &Constructor::compositionToolStripMenuItem_Click);
 			   // 
 			   // colourToolStripMenuItem
 			   // 
@@ -215,15 +237,17 @@ namespace UMLCreator {
 			   // 
 			   // solidToolStripMenuItem
 			   // 
+			   this->solidToolStripMenuItem->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"solidToolStripMenuItem.Image")));
 			   this->solidToolStripMenuItem->Name = L"solidToolStripMenuItem";
-			   this->solidToolStripMenuItem->Size = System::Drawing::Size(224, 26);
+			   this->solidToolStripMenuItem->Size = System::Drawing::Size(167, 26);
 			   this->solidToolStripMenuItem->Text = L"Solid";
 			   this->solidToolStripMenuItem->Click += gcnew System::EventHandler(this, &Constructor::solidToolStripMenuItem_Click);
 			   // 
 			   // dottedLineToolStripMenuItem
 			   // 
+			   this->dottedLineToolStripMenuItem->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"dottedLineToolStripMenuItem.Image")));
 			   this->dottedLineToolStripMenuItem->Name = L"dottedLineToolStripMenuItem";
-			   this->dottedLineToolStripMenuItem->Size = System::Drawing::Size(224, 26);
+			   this->dottedLineToolStripMenuItem->Size = System::Drawing::Size(167, 26);
 			   this->dottedLineToolStripMenuItem->Text = L"Dotted line";
 			   this->dottedLineToolStripMenuItem->Click += gcnew System::EventHandler(this, &Constructor::dottedLineToolStripMenuItem_Click);
 			   // 
@@ -266,6 +290,7 @@ namespace UMLCreator {
 			   // 
 			   this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			   this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			   this->AutoSize = true;
 			   this->ClientSize = System::Drawing::Size(500, 393);
 			   this->Controls->Add(this->add_class_diagramm);
 			   this->Controls->Add(this->back_to_res_form);
@@ -277,6 +302,7 @@ namespace UMLCreator {
 			   this->Name = L"Constructor";
 			   this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			   this->Text = L"Constructor";
+			   this->WindowState = System::Windows::Forms::FormWindowState::Maximized;
 			   this->PicBoxContMenu->ResumeLayout(false);
 			   this->ResumeLayout(false);
 
@@ -297,6 +323,8 @@ namespace UMLCreator {
 	private: System::Void classicToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void solidToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void dottedLineToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void compositionToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void inheritanceToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e);
 
 	private: System::Void create_new_pic_box(PictureBox^ pic, PictureBox^ obj);
 

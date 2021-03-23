@@ -89,4 +89,9 @@
   <ItemGroup>
     <Font Include="20470.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

@@ -19,7 +19,7 @@ System::Void UMLCreator::ResultForm::BackResultForm_Click(System::Object^ sender
 
 System::Void UMLCreator::ResultForm::ChangeResultForm_Click(System::Object^ sender, System::EventArgs^ e)
 {
-	if (this->RedactorResultForm->Text->Length == 0) 
+	if (this->RedactorResultForm->Text->Length < 60 && this->class_list->SelectedItem == nullptr) 
 	{
 		return System::Void(); 
 	}
@@ -93,6 +93,7 @@ System::Void UMLCreator::ResultForm::ccr_Click(System::Object^ sender, System::E
 
 System::Void UMLCreator::ResultForm::constructor_button_Click(System::Object^ sender, System::EventArgs^ e)
 {
+	create_default_arrow();
 	delete this->PictureResultForm->Image;
 	UMLCreator::Constructor^ next_form = gcnew UMLCreator::Constructor(work, images_size);
 	next_form->lb->Items->AddRange(this->class_list->Items);

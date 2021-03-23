@@ -8,7 +8,9 @@
 enum class head
 {
 	ARROW,
-	AGREGATION
+	AGREGATION,
+	COMPOSITION,
+	INHERITANCE
 };
 
 enum class body
@@ -22,11 +24,14 @@ struct ArrowProperities
 	head h = head::ARROW;
 	body b = body::SOLID;
 	sf::Color colour = sf::Color::Black;
-	int width = 22, height = 12;
+	int vertical_a = 0;
+	int vertical_b = 0;
+	int horizontal = 22;
 };
 
 sf::Font LoadFontFromResource(const int ID);
 void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& curr, bool& work, sf::Mutex& m);
+void create_default_arrow();
 
 std::pair<std::string, std::pair<std::string, std::pair<size_t, size_t>>> 
 CreateImage(std::vector<std::string> meth, std::vector<std::string> var,
