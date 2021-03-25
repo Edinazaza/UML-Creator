@@ -56,4 +56,4 @@ private:
 
 std::string create_dir(DataCollector& dc);
 std::string get_data_dir(); 
-size_t parse_several_classes(std::ifstream& source, const std::string& output_path);
+size_t parse_several_classes(std::ifstream& source, const std::string& output_path, size_t _count = 1);

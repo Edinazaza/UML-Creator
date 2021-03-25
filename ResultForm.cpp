@@ -51,7 +51,11 @@ System::Void UMLCreator::ResultForm::ChangeResultForm_Click(System::Object^ send
 			break;
 		}
 	}
-	auto ret = ParserUmlAndChangeImage(counter, counter);
+	diagramm_properities dp;
+	if (this->diagramm_size == 2) { dp.font_size = 10; dp.square_width = 222; dp.height_divisor = 1.015; }
+	if (this->diagramm_size == 3) { dp.font_size = 8; dp.square_width = 162; dp.height_divisor = 1.025; }
+
+	auto ret = ParserUmlAndChangeImage(counter, counter, dp);
 	this->change_class_list(ret.second, counter-1);
 	
 	this->PictureResultForm->ImageLocation = Convert_string_to_String(location);
@@ -139,6 +143,34 @@ System::Void UMLCreator::ResultForm::class_list_SelectedIndexChanged(System::Obj
 		std::string new_text = Convert_String_to_string(this->text);
 		std::string o_tag = "<" + std::to_string(obj->SelectedIndex+1) + "name>";
 		std::string c_tag = "</" + std::to_string(obj->SelectedIndex+1) + "methods>";
-		this->RedactorResultForm->Text = Convert_string_to_String(new_text.substr(new_text.find(o_tag), new_text.find(c_tag) + c_tag.size()));
+		this->RedactorResultForm->Text = Convert_string_to_String(new_text.substr(new_text.find(o_tag), new_text.find(c_tag) + c_tag.size() - new_text.find(o_tag)));
 	}
+}
+
+System::Void UMLCreator::ResultForm::add_class_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	UMLCreator::StartForm^ next_form = gcnew UMLCreator::StartForm();
+	next_form->Show();
+	next_form->class_list->Items->AddRange(this->class_list->Items);
+	next_form->text = this->text;
+	next_form->count = this->images_size;
+	this->Hide();
+	next_form->set_back_button_visible();
+	next_form->set_start();
+	return System::Void();
+}
+
+System::Void UMLCreator::ResultForm::size_1_rb_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
+{
+	this->diagramm_size = 1;
+}
+
+System::Void UMLCreator::ResultForm::size_2_rb_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
+{
+	this->diagramm_size = 2;
+}
+
+System::Void UMLCreator::ResultForm::size_3_rb_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
+{
+	this->diagramm_size = 3;
 }

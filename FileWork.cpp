@@ -37,7 +37,7 @@ std::string change_text_by_tags(std::string source, std::string new_piece, size_
             while (line.find(c_tag) == std::string::npos) { std::getline(stream, line); }
             std::getline(stream, line);
         }
-        ret += line;
+        ret += line + "\n";
     }
     return ret;
 }

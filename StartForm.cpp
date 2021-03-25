@@ -10,31 +10,14 @@
 #include "FileWork.h"
 #include "CreateImageSFML.h"
 
-System::Void UMLCreator::StartForm::YourselfStartForm_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	DataCollector DC_PARSER;
-	create_dir(DC_PARSER);
-	WriteInFile(get_data_dir() + "\\ClassRead.txt", STANDART_CLASS);
-	/*DC_PARSER.Parse(get_data_dir() + "\\ClassRead.txt");
-	DC_PARSER.output(get_data_dir() + "\\ParseClass.txt");*/
-	std::ifstream source(get_data_dir() + "\\ClassRead.txt");
-	size_t counter = parse_several_classes(source, (get_data_dir() + "\\ParseClass.txt"));
-
-	auto res = ParserUmlAndChangeImage(counter);
-
-	ResultForm^ form = gcnew ResultForm(res.first, res.second);
-	this->Hide();
-	form->Show();
-}
+#define PARSE_INPUT_EXCEPTION \
+MessageBox^ mb;\
+mb->Show(this, "Wrong input!", "Error");\
+return System::Void();
 
 System::Void UMLCreator::StartForm::CreateStartForm_Click(System::Object^ sender, System::EventArgs^ e)
 {
-	if (ClassTextStartForm->Text->Length < 9)
-	{
-		MessageBox^ mb;
-		mb->Show(this, "Wrong input!", "Error");
-		return System::Void();
-	}
+	if (ClassTextStartForm->Text->Length < 9) {PARSE_INPUT_EXCEPTION}
 
 	std::string str;
 	Convert_String_to_string(ClassTextStartForm->Text->ToString(), str);
@@ -43,14 +26,27 @@ System::Void UMLCreator::StartForm::CreateStartForm_Click(System::Object^ sender
 	create_dir(DC_PARSER);
 	WriteInFile(get_data_dir() + "\\ClassRead.txt", str);
 
-	/*DC_PARSER.Parse(get_data_dir() + "\\ClassRead.txt");
-	DC_PARSER.output(get_data_dir() + "\\ParseClass.txt");*/
 	std::ifstream source(get_data_dir() + "\\ClassRead.txt");
-	size_t counter = parse_several_classes(source, (get_data_dir() + "\\ParseClass.txt"));
-	
+	size_t counter = parse_several_classes(source, (get_data_dir() + "\\ParseClass.txt"), this->count+1);
+	if(counter == 0) { PARSE_INPUT_EXCEPTION }
 	auto res = ParserUmlAndChangeImage(counter);
-
-	ResultForm^ form = gcnew ResultForm(res.first, res.second);
 	this->Hide();
-	form->Show();
+	if (start)
+	{
+		ResultForm^ form = gcnew ResultForm(res.first, res.second);
+		form->Show();
+	}
+	else
+	{
+		ResultForm^ form = gcnew ResultForm(res.first, res.second);
+		form->_new = false;
+		std::string line;
+		form->Show();
+	}
+}
+
+System::Void UMLCreator::StartForm::back_to_result_form_Click(System::Object^ sender, System::EventArgs^ e)
+{
+	this->Hide();
+	return System::Void();
 }

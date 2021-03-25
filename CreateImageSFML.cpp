@@ -40,18 +40,19 @@ T max(T a, T_ b)
 }
 
 std::pair<std::string, std::pair<std::string, std::pair<size_t, size_t>>> 
-CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::string name, std::string FilePath, size_t count)
+CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::string name, std::string FilePath, size_t count, 
+	diagramm_properities prop)
 {
 	if (!(name.empty() && meth.empty() && var.empty())) {
-		unsigned int width = 252;
-		for (std::string& i : meth)
+		unsigned int width = prop.square_width;
+	/*	for (std::string& i : meth)
 		{
 			width = max(unsigned(i.size()) * 5 + 20, width);
-		}
+		}*/
 
-		const unsigned int height = (unsigned(meth.size()) + unsigned(var.size())) * 14 + 50;
+		const float height = ((float(meth.size()) + float(var.size())) / prop.height_divisor * 14.f + 50.f ) ;
 
-		sf::RectangleShape rectangle(sf::Vector2f(float(width - 2), float(height - 2)));
+		sf::RectangleShape rectangle(sf::Vector2f(float(width - 2.5), float(height - 2.5)));
 		rectangle.setFillColor(sf::Color::White);
 		rectangle.setOutlineThickness(1);
 		rectangle.setOutlineColor(sf::Color::Black);
@@ -67,7 +68,7 @@ CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::st
 		txt.setFillColor(sf::Color::Black);
 
 		// class name
-		txt.setCharacterSize(16);
+		txt.setCharacterSize(prop.font_size + 4);
 		txt.setStyle(sf::Text::Bold);
 		txt.setString(name);
 		txt.move(sf::Vector2f((float(width) / 2 - 4 * float(name.size())), float(7)));
@@ -81,7 +82,7 @@ CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::st
 
 		// variable
 		txt.setStyle(sf::Text::Regular);
-		txt.setCharacterSize(12);
+		txt.setCharacterSize(prop.font_size);
 		auto space = rectangle.getPosition().y + 5;
 		for (auto& i : var)
 		{
@@ -101,7 +102,7 @@ CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::st
 
 		// method
 		space += 5;
-		txt.setCharacterSize(12);
+		txt.setCharacterSize(prop.font_size);
 		for (auto& i : meth)
 		{
 			txt.setString(i);
@@ -121,7 +122,7 @@ CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::st
 }
 
 std::pair<size_t, std::vector<std::pair<std::string, std::pair<std::string, std::pair<size_t, size_t>>>>> 
-ParserUmlAndChangeImage(size_t counter, size_t wanted_class)
+ParserUmlAndChangeImage(size_t counter, size_t wanted_class, diagramm_properities prop)
 {
 	std::string filename = get_data_dir() + "\\ParseClass.txt";
 	std::ifstream source(filename);
@@ -131,7 +132,7 @@ ParserUmlAndChangeImage(size_t counter, size_t wanted_class)
 	for( ;count <= counter; ++count)
 	{
 		classes.push_back(CreateImage(pUML.getMethod(source, count), pUML.getVariables(source, count), 
-			pUML.getClassName(source, count), get_data_dir() + "\\class_img" + std::to_string(count) + ".png", count));
+			pUML.getClassName(source, count), get_data_dir() + "\\class_img" + std::to_string(count) + ".png", count, prop));
 	}
 	return { counter, classes };
 }

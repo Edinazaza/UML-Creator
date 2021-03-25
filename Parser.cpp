@@ -326,7 +326,7 @@ void DataCollector::output(size_t& count, std::string filepath)
 			first = false;
 		}
 		method += (item.first.first.second == class_name ? ")" : "): ") + item.first.first.first;
-		insert_newline_symb(method, 40);
+		insert_newline_symb(method, 35);
 		(filepath == "nofile.txt" ? std::cout : stream) << method << '\n';
 	}
 	(filepath == "nofile.txt" ? std::cout : stream) << "+ ~" << class_name << "()" << '\n';
@@ -392,9 +392,9 @@ std::string create_dir(DataCollector& dc)
 	return dir;
 }
 
-size_t parse_several_classes(std::ifstream& source, const std::string& output_path)
+size_t parse_several_classes(std::ifstream& source, const std::string& output_path, size_t _count)
 {
-	size_t count = 1;
+	size_t count = _count;
 	std::vector<DataCollector> data_vec;
 	std::ios_base::app;
 	bool finished = false;

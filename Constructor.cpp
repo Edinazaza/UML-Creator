@@ -16,6 +16,18 @@ System::Void UMLCreator::Constructor::pictureBox_MouseDown(Object^ sender, Mouse
 {
 	down = true;
 	PictureBox^ obj = safe_cast<PictureBox^>(sender);
+
+	if (obj->Name == "arrow_sample")
+	{
+		arrow_sample_location = arrow_sample->Location;
+		PictureBox^ new_a_s = gcnew PictureBox;
+		create_new_pic_box(new_a_s, obj);
+		new_a_s->Location = this->arrow_sample->Location;
+		this->Controls->Add(new_a_s);
+		pics->Add(new_a_s);
+		this->arrow_sample->Visible = true;
+	}
+
 	focused_name = obj->Name;
 	m.lock();
 	curr = Convert_String_to_string(obj->Name);
@@ -86,6 +98,13 @@ System::Void UMLCreator::Constructor::pictureBox_MouseUp(Object^ sender, MouseEv
 	if (obj->Name[0] == 'A' && obj->Name[1] == 'B' && ab_resizing) {
 		obj->ImageLocation = Convert_string_to_String(get_data_dir() + "\\out.png");
 	}
+	if (obj->Name == "arrow_sample")
+	{
+		PictureBox^ new_a_s = safe_cast<PictureBox^>(pics->Components[pics->Components->Count - 1]);
+		new_a_s->Location = obj->Location;
+		obj->Location = arrow_sample_location;
+	}
+
 	down = false;
 	ab_resizing = false;
 	moving = false;
@@ -145,7 +164,9 @@ System::Void UMLCreator::Constructor::save_to_file_Click(System::Object^ sender,
 
 System::Void UMLCreator::Constructor::key_press(System::Object^ sender, KeyEventArgs^ e)
 {
-	if (focused_label_name)
+	if (!focused_name){return System::Void();} 
+
+	if (Convert_String_to_string(focused_name).find("LB") != npos || Convert_String_to_string(focused_name).find("text_sample") != npos)
 	{
 		TextBox^ obj = gcnew TextBox;
 		if (e->KeyCode == Keys::Delete)
@@ -153,12 +174,12 @@ System::Void UMLCreator::Constructor::key_press(System::Object^ sender, KeyEvent
 			for (size_t i = 0; i < labels->Components->Count; ++i)
 			{
 				obj = safe_cast<TextBox^>(labels->Components[i]);
-				if (obj->Name == focused_label_name)
+				if (obj->Name == focused_name)
 				{
 					obj->Hide();
 					labels->Remove(obj);
 					delete obj;
-					focused_label_name = nullptr;
+					focused_name = nullptr;
 					break;
 				}
 			}
@@ -179,11 +200,13 @@ System::Void UMLCreator::Constructor::key_press(System::Object^ sender, KeyEvent
 			m.unlock();
 			pics->Remove(obj);
 			delete obj;
+			focused_name = nullptr;
 		}
 		else if (e->KeyCode == Keys::V && e->Modifiers == Keys::Control)
 		{
 			System::Windows::Forms::PictureBox^ pic = gcnew System::Windows::Forms::PictureBox();
 			create_new_pic_box(pic, buffer);
+			pic->Location = Point(Cursor->Position.X, Cursor->Position.Y-32);
 			this->Controls->Add(pic);
 		}
 		else if (e->KeyCode == Keys::C && e->Modifiers == Keys::Control)
@@ -279,18 +302,19 @@ System::Void UMLCreator::Constructor::create_new_pic_box(PictureBox^ pic, Pictur
 	pic->BorderStyle = BorderStyle::FixedSingle;
 	obj == nullptr ? pic->ImageLocation = Convert_string_to_String(get_data_dir() + "\\arrow_sample.png") : pic->Image = obj->Image;
 	if (Convert_String_to_string(pic->Name).find("AB") != npos) {
-		if (obj == nullptr) {
+		if (obj == nullptr || obj->Name == "arrow_sample") {
 			ArrowProperities ap;
 			m.lock();
 			arrows["AB" + std::to_string(count++)] = ap;
 			m.unlock();
 		}
-		else {
+		else{
 			m.lock();
 			arrows["AB" + std::to_string(count++)] = arrows.find(Convert_String_to_string(obj->Name))->second;
 			m.unlock();
 		}
 	}
+
 }
 
 System::Void UMLCreator::Constructor::agregatorToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e)
@@ -391,7 +415,23 @@ System::Void UMLCreator::Constructor::textBox_MouseDown(Object^ sender, MouseEve
 {
 	down = true;
 	TextBox^ obj = safe_cast<TextBox^>(sender);
-	focused_label_name = obj->Name;
+	if (obj->Name == "text_sample")
+	{
+		textbox_sample_location = text_sample->Location;
+		TextBox^ tb = gcnew TextBox;
+		tb->Location = textbox_sample_location;
+		tb->Size = System::Drawing::Size(20, 10);
+		labels->Add(tb);
+		tb->MouseDown += gcnew MouseEventHandler(this, &Constructor::textBox_MouseDown);
+		tb->MouseUp += gcnew MouseEventHandler(this, &Constructor::textBox_MouseUp);
+		tb->MouseMove += gcnew MouseEventHandler(this, &Constructor::textBox_MouseMove);
+		tb->MinimumSize = System::Drawing::Size(20, 10);
+		tb->Name = Convert_string_to_String("LB" + std::to_string(count++));
+		tb->BorderStyle = BorderStyle::FixedSingle;
+		this->Controls->Add(tb);
+	}
+
+	focused_name = obj->Name;
 	fixed.X = Cursor->Position.X - this->Location.X;
 	fixed.Y = Cursor->Position.Y - this->Location.Y;
 	fixed.X -= obj->Location.X;
@@ -400,6 +440,14 @@ System::Void UMLCreator::Constructor::textBox_MouseDown(Object^ sender, MouseEve
 
 System::Void UMLCreator::Constructor::textBox_MouseUp(Object^ sender, MouseEventArgs^ args)
 {
+	TextBox^ obj = safe_cast<TextBox^>(sender);
+	if (obj->Name == "text_sample")
+	{
+		TextBox^ new_t_b = safe_cast<TextBox^>(labels->Components[labels->Components->Count - 1]);
+		new_t_b->Location = obj->Location;
+		obj->Location = textbox_sample_location;
+	}
+
 	down = false;
 	moving = false;
 	ab_resizing = false;
@@ -438,6 +486,8 @@ System::Void UMLCreator::Constructor::textBox_MouseMove(Object^ sender, MouseEve
 System::Void UMLCreator::Constructor::main_form_mouse_move(Object^ sender, MouseEventArgs^ args)
 {
 	if(!thread_created) {
+		this->lb->MouseDoubleClick += gcnew System::Windows::Forms::MouseEventHandler(this, &UMLCreator::Constructor::lb_doubleclick);
+		arrow_sample->ImageLocation = Convert_string_to_String(get_data_dir() + "\\arrow_sample.png");
 		std::thread arrow_crerator(create_arrow, std::ref(arrows), std::ref(curr), std::ref(work), std::ref(m));
 		arrow_crerator.detach();
 		thread_created = true;
@@ -458,7 +508,7 @@ System::Void UMLCreator::Constructor::back_to_res_form_Click(System::Object^ sen
 	return System::Void();
 }
 
-System::Void UMLCreator::Constructor::add_diagramm_Click(System::Object^ sender, System::EventArgs^ e)
+System::Void UMLCreator::Constructor::lb_doubleclick(Object^ sender, MouseEventArgs^ args)
 {
 	std::string location = Convert_String_to_string(this->lb->SelectedItem != nullptr ? this->lb->SelectedItem->ToString() : this->lb->Items[this->lb->Items->Count - 1]->ToString());
 	size_t space_ind = location.rfind(' ') + 1;
@@ -466,7 +516,7 @@ System::Void UMLCreator::Constructor::add_diagramm_Click(System::Object^ sender,
 	PictureBox^ pic = gcnew PictureBox;
 	pic->ImageLocation = Convert_string_to_String(location);
 	System::Drawing::Size s;
-	std::string size = Convert_String_to_string((this->lb->SelectedItem != nullptr ? this->lb->SelectedItem->ToString() : this->lb->Items[this->lb->Items->Count-1]->ToString()));
+	std::string size = Convert_String_to_string((this->lb->SelectedItem != nullptr ? this->lb->SelectedItem->ToString() : this->lb->Items[this->lb->Items->Count - 1]->ToString()));
 	size = size.substr(size.rfind('{') + 1, size.size());
 	s.Width = std::stoi(size.substr(0, size.find(',')));
 	s.Height = std::stoi(size.substr(size.find(',') + 1, size.size()));
