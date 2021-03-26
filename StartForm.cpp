@@ -40,13 +40,16 @@ System::Void UMLCreator::StartForm::CreateStartForm_Click(System::Object^ sender
 	{
 		ResultForm^ form = gcnew ResultForm(res.first, res.second);
 		form->_new = false;
-		std::string line;
 		form->Show();
 	}
 }
 
 System::Void UMLCreator::StartForm::back_to_result_form_Click(System::Object^ sender, System::EventArgs^ e)
 {
+	auto res = ParserUmlAndChangeImage(this->count);
+	ResultForm^ form = gcnew ResultForm(res.first, res.second);
+	form->_new = false;
+	form->Show();
 	this->Hide();
 	return System::Void();
 }

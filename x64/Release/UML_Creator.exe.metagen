@@ -38,9 +38,19 @@ Class UMLCreator.ResultForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldIn
     Void .ctor(UInt64): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
     Void .ctor(UInt64, std.vector<std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<unsigned __int64\,unsigned __int64> > >\,std::allocator<std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<unsigned __int64\,unsigned __int64> > > > >*): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
   Fields:
+    UInt64 images_size : Public
+    System.String text : Public
+    Boolean _new : Public
     System.Windows.Forms.ListBox class_list : Public
   Methods:
     change_class_list(vector<std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<unsigned __int64\,unsigned __int64> > >\,std::allocator<std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<std::basic_string<char\,std::char_traits<char>\,std::allocator<char> >\,std::pair<unsigned __int64\,unsigned __int64> > > > >*, UInt64): PrivateScope, Public, HideBySig
 Class UMLCreator.StartForm: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :System.Windows.Forms.Form
     Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    System.Windows.Forms.ListBox class_list : Public
+    System.String text : Public
+    UInt64 count : Public
+  Methods:
+    set_back_button_visible(): PrivateScope, Public, HideBySig
+    set_start(): PrivateScope, Public, HideBySig

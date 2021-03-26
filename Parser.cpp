@@ -306,13 +306,14 @@ void DataCollector::output(size_t& count, std::string filepath)
 	(filepath == "nofile.txt" ? std::cout : stream) << (filepath == "nofile.txt" ? "class_name: " : ("<" + std::to_string(count) + "name>\n")) <<
 		class_name << (filepath == "nofile.txt" ? (inheritance.first.empty() ? "\ninheritance: No" : "\ninheritance: parent - " + inheritance.first + ", type - " + inheritance.second) : "")
 		<< (filepath == "nofile.txt" ? "\n\nvariables: " : ("\n</" + std::to_string(count) + "name>\n<" + std::to_string(count) + "variables>"));
-
+	
 	for (const auto& item : variables)
 	{
 		(filepath == "nofile.txt" ? std::cout : stream) << '\n' << sections_to_chars(item.second) << " " << item.first.first << ": " << item.first.second;
 	}
 	(filepath == "nofile.txt" ? std::cout : stream) <<
 		(filepath == "nofile.txt" ? "\n\nmethods:\n" : ("\n</" + std::to_string(count) + "variables>\n<" + std::to_string(count) + "methods>\n"));
+	
 	bool first = true;
 	for (const auto& item : methods)
 	{
