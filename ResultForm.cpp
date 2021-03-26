@@ -52,8 +52,8 @@ System::Void UMLCreator::ResultForm::ChangeResultForm_Click(System::Object^ send
 		}
 	}
 	diagramm_properities dp;
-	if (this->diagramm_size == 2) { dp.font_size = 10; dp.square_width = 222; dp.height_divisor = 1.015; }
-	if (this->diagramm_size == 3) { dp.font_size = 8; dp.square_width = 162; dp.height_divisor = 1.025; }
+	if (this->diagramm_size == 2) { dp.font_size = 10; dp.height_decrement = 0.5; dp.str_lenght = 40; }
+	if (this->diagramm_size == 3) { dp.font_size = 8; dp.height_decrement = 3; dp.str_lenght = 60; }
 
 	auto ret = ParserUmlAndChangeImage(counter, counter, dp);
 	this->change_class_list(ret.second, counter-1);

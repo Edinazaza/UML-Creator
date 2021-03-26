@@ -33,7 +33,8 @@ struct diagramm_properities
 {
 	unsigned int square_width = 252;
 	unsigned int font_size = 12;
-	float height_divisor = 1;
+	float height_decrement = 0;
+	unsigned int str_lenght = 35;
 };
 
 sf::Font LoadFontFromResource(const int ID);

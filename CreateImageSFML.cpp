@@ -50,7 +50,7 @@ CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::st
 			width = max(unsigned(i.size()) * 5 + 20, width);
 		}*/
 
-		const float height = ((float(meth.size()) + float(var.size())) / prop.height_divisor * 14.f + 50.f ) ;
+		const float height = ((float(meth.size()) + float(var.size())) * (14 - prop.height_decrement) + 50.f ) ;
 
 		sf::RectangleShape rectangle(sf::Vector2f(float(width - 2.5), float(height - 2.5)));
 		rectangle.setFillColor(sf::Color::White);
@@ -103,9 +103,14 @@ CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::st
 		// method
 		space += 5;
 		txt.setCharacterSize(prop.font_size);
-		for (auto& i : meth)
+		for (size_t i = 0; i < meth.size(); ++i)
 		{
-			txt.setString(i);
+			std::string line = meth[i];
+			while (i+1 < meth.size() && line.size() + meth[i+1].size() <= prop.str_lenght && meth[i + 1].find('+') == npos && meth[i + 1].find('-') == npos && meth[i + 1].find('#') == npos)
+			{
+				line += " " + meth[++i];
+			}
+			txt.setString(line);
 			txt.setPosition(4, space);
 			renderTexture.draw(txt);
 			space += 14;

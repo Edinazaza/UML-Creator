@@ -100,7 +100,7 @@ std::vector<std::string> ParserUML::getMethod(std::ifstream& source, size_t coun
 	std::getline(source, line);
 	while (true)
 	{
-		std::getline(source, line);
+		std::getline(source, line); 
 		if (line.find(tag) != npos) { break; }
 		methods_.push_back(line); 
 	}
