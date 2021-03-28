@@ -139,7 +139,6 @@ namespace UMLCreator {
 			this->PictureResultForm->Size = System::Drawing::Size(469, 549);
 			this->PictureResultForm->TabIndex = 0;
 			this->PictureResultForm->TabStop = false;
-			this->PictureResultForm->Click += gcnew System::EventHandler(this, &ResultForm::PictureResultForm_Click);
 			// 
 			// DownloadResultForm
 			// 
@@ -321,7 +320,6 @@ namespace UMLCreator {
 #pragma endregion
 	private: System::Void BackResultForm_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void ChangeResultForm_Click(System::Object^ sender, System::EventArgs^ e);
-	private: System::Void PictureResultForm_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void DownloadResultForm_Click_1(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void ccr_Click(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void constructor_button_Click(System::Object^ sender, System::EventArgs^ e);

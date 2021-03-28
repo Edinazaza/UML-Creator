@@ -59,18 +59,6 @@ System::Void UMLCreator::ResultForm::ChangeResultForm_Click(System::Object^ send
 	this->change_class_list(ret.second, counter-1);
 	
 	this->PictureResultForm->ImageLocation = Convert_string_to_String(location);
-	//Bitmap^ img = gcnew Bitmap(Convert_string_to_String(location));
-	//this->PictureResultForm->Image = img;
-	//this->PictureResultForm->Refresh();
-	//this->PictureResultForm->Visible = true;
-}
-
-System::Void UMLCreator::ResultForm::PictureResultForm_Click(System::Object^ sender, System::EventArgs^ e)
-{
-	delete this->PictureResultForm->Image;
-	this->PictureResultForm->Image = gcnew Bitmap(Convert_string_to_String(get_data_dir() + "\\output.jpg"));
-	this->PictureResultForm->Refresh();
-	this->PictureResultForm->Visible = true;
 }
 
 System::Void UMLCreator::ResultForm::DownloadResultForm_Click_1(System::Object^ sender, System::EventArgs^ e)
