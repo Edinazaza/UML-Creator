@@ -80,13 +80,17 @@ System::Void UMLCreator::Constructor::pictureBox_MouseMove(Object^ sender, Mouse
 		}
 	}
 
-	if (down && !ab_resizing)
+	else if (!ab_resizing)
 	{
-		moving = true;
-		p.X -= fixed.X;
-		p.Y -= fixed.Y;
-		obj->Location = p;
+		Cursor->Current = System::Windows::Forms::Cursors::Hand;
+		if (down) {
+			moving = true;
+			p.X -= fixed.X;
+			p.Y -= fixed.Y;
+			obj->Location = p;
+		}
 	}
+
 	if (obj->Name[0] == 'A' && obj->Name[1] == 'B' && down && ab_resizing) {
 		obj->ImageLocation = Convert_string_to_String(get_data_dir() + "\\out.png");
 	}

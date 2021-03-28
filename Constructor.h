@@ -275,7 +275,7 @@ namespace UMLCreator {
 			   this->arrow_sample->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
 			   this->arrow_sample->Location = System::Drawing::Point(509, 39);
 			   this->arrow_sample->Name = L"arrow_sample";
-			   this->arrow_sample->Size = System::Drawing::Size(22, 12);
+			   this->arrow_sample->Size = System::Drawing::Size(28, 14);
 			   this->arrow_sample->TabIndex = 2;
 			   this->arrow_sample->TabStop = false;
 			   this->arrow_sample->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &Constructor::pictureBox_Click);
