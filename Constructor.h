@@ -56,6 +56,7 @@ namespace UMLCreator {
 		size_t images_size, classes_count;
 		System::ComponentModel::Container^ labels = gcnew System::ComponentModel::Container;
 		Point fixed;
+		Point arrow_location;
 		Point arrow_sample_location;
 		Point textbox_sample_location;
 
@@ -153,6 +154,7 @@ namespace UMLCreator {
 			   this->rotateToolStripMenuItem->Size = System::Drawing::Size(125, 24);
 			   this->rotateToolStripMenuItem->Text = L"Rotate";
 			   this->rotateToolStripMenuItem->Click += gcnew System::EventHandler(this, &Constructor::rotateToolStripMenuItem_Click);
+			   this->rotateToolStripMenuItem->Visible = false;
 			   // 
 			   // deleteToolStripMenuItem
 			   // 

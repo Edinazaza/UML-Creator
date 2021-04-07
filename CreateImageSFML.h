@@ -27,6 +27,10 @@ struct ArrowProperities
 	int vertical_a = 0;
 	int vertical_b = 0;
 	int horizontal = 22;
+	System::Drawing::Point head_location;
+	bool w_classic = true;
+	bool h_classic = true;
+	System::Drawing::Point arrow_location;
 };
 
 struct diagramm_properities

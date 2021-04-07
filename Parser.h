@@ -25,7 +25,7 @@ public:
 	void set_dir(std::string dir) { data_directory = dir; }
 private:
 	std::set<std::string> types =
-	{ "int", "void", "string", "char", "bool", "size_t", "unsigned", "long", "double", "short", "float" };
+	{ "int", "void", "string", "char", "bool", "size_t", "unsigned", "long", "double", "short", "float", "uint64_t" };
 	std::string class_name;
 
 	//{{name(var), type(var)}, section}

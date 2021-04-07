@@ -16,16 +16,14 @@ System::Void UMLCreator::Constructor::pictureBox_MouseDown(Object^ sender, Mouse
 {
 	down = true;
 	PictureBox^ obj = safe_cast<PictureBox^>(sender);
-
 	if (obj->Name == "arrow_sample")
 	{
-		arrow_sample_location = arrow_sample->Location;
+		arrow_sample_location = this->arrow_sample->Location;
 		PictureBox^ new_a_s = gcnew PictureBox;
 		create_new_pic_box(new_a_s, obj);
 		new_a_s->Location = this->arrow_sample->Location;
 		this->Controls->Add(new_a_s);
 		pics->Add(new_a_s);
-		this->arrow_sample->Visible = true;
 	}
 
 	focused_name = obj->Name;
@@ -46,69 +44,169 @@ System::Void UMLCreator::Constructor::pictureBox_MouseMove(Object^ sender, Mouse
 	p.Y = Cursor->Position.Y;
 	p.X -= this->Location.X;
 	p.Y -= this->Location.Y;
+	auto current_picbox = arrows.find(Convert_String_to_string(obj->Name));
 
-
-	if ((obj->Name[0] == 'A' && obj->Name[1] == 'B' && ((p.X < (obj->Location.X + obj->Width + 1) && p.X >(obj->Location.X + obj->Width - 6)) &&
-		(p.Y < (obj->Location.Y + obj->Height + 29) && p.Y >(obj->Location.Y + obj->Height + 22))) || ab_resizing) && !moving)
+	if (obj->Name[0] == 'A' && obj->Name[1] == 'B' && !moving)
 	{
-		Cursor->Current = Cursors::SizeAll;
-		if (down)
+		auto head_point = arrows.find(Convert_String_to_string(obj->Name))->second.head_location;
+		if (((p.X < (head_point.X + 1) && p.X >(head_point.X - 6)) && (p.Y < (head_point.Y + 29) && p.Y >(head_point.Y + 22)) || ab_resizing))
 		{
-			ab_resizing = true;
-			m.lock();
-			auto current = arrows[curr];
-
-			obj->Width = arrows[curr].horizontal = Cursor->Position.X - this->Location.X - obj->Location.X;
-
-			if (current.horizontal > 20)
+			Cursor->Current = Cursors::SizeAll;
+			if (down)
 			{
-				obj->Height = Cursor->Position.Y - this->Location.Y - obj->Location.Y - 25;
-				if ((obj->Height < current.vertical_a + current.vertical_b) && current.vertical_b < 10)
-				{
-					arrows[curr].vertical_a = obj->Height - 10;
-				}
-				arrows[curr].vertical_b = obj->Height - current.vertical_a;
+				ArrowProperities new_prop;
 
+				arrow_location = current_picbox->second.arrow_location;
+				m.lock();
+
+				bool classic_w = current_picbox->second.w_classic;
+				bool classic_h = current_picbox->second.h_classic;
+
+				ab_resizing = true;
+				auto current = arrows[curr];
+				new_prop = current;
+
+				int height = Cursor->Position.Y - this->Location.Y - arrow_location.Y - 20;
+				int width = Cursor->Position.X - this->Location.X - arrow_location.X;
+
+				new_prop.w_classic = true;
+				new_prop.h_classic = true;
+
+				if (!current_picbox->second.h_classic && height > 0)
+				{
+					new_prop.arrow_location.Y = obj->Location.Y;
+				}
+				if (!current_picbox->second.w_classic && width > 0)
+				{
+					new_prop.arrow_location.X = obj->Location.X;
+				}
+
+				if (width < 0)
+				{
+					classic_w = false;
+					new_prop.w_classic = false;
+				}
+
+				if (height < 0)
+				{
+					classic_h = false;
+					new_prop.h_classic = false;
+				}
+
+
+				if (!new_prop.h_classic && !new_prop.w_classic)
+				{
+					obj->Location = System::Drawing::Point(Cursor->Position.X - this->Location.X - 9, Cursor->Position.Y - this->Location.Y - 35);
+				}
+				else if (!new_prop.w_classic)
+				{
+					obj->Location = System::Drawing::Point(Cursor->Position.X - this->Location.X - 9, obj->Location.Y);
+				}
+				else if (!new_prop.h_classic)
+				{
+					obj->Location = System::Drawing::Point(obj->Location.X, Cursor->Position.Y - this->Location.Y - 35);
+				}
+
+				obj->Width = new_prop.horizontal = abs(width);
+				obj->Height = abs(height);
+
+				if (current.horizontal > 20)
+				{
+					if ((obj->Height < current.vertical_a + current.vertical_b) && current.vertical_b < 10)
+					{
+						new_prop.vertical_a = obj->Height - 10;
+					}
+					new_prop.vertical_b = obj->Height - current.vertical_a;
+				}
+				else
+				{
+					new_prop.vertical_b = 0;
+					new_prop.vertical_a = obj->Height - 10;
+				}
+
+				if (!classic_w && !classic_h)
+				{
+					new_prop.head_location =
+						System::Drawing::Point(obj->Location.X + 10, obj->Location.Y + 10);
+				}
+				else if (!classic_w)
+				{
+					new_prop.head_location =
+						System::Drawing::Point(obj->Location.X + 10, obj->Location.Y + obj->Height);
+				}
+				else if (!classic_h)
+				{
+					new_prop.head_location =
+						System::Drawing::Point(obj->Location.X + obj->Width, obj->Location.Y + 10);
+				}
+				else
+				{
+					new_prop.head_location =
+						System::Drawing::Point(obj->Location.X + obj->Width, obj->Location.Y + obj->Height);
+				}
+				arrows[curr] = new_prop;
+				m.unlock();
+			}
+		}
+	}
+
+	if (down && !ab_resizing)
+	{
+		moving = true;
+		p.X -= fixed.X;
+		p.Y -= fixed.Y;
+		obj->Location = p;
+		if (current_picbox != arrows.end())
+		{
+			ArrowProperities new_ap = arrows[Convert_String_to_string(obj->Name)];
+			if (!current_picbox->second.w_classic && !current_picbox->second.h_classic)
+			{
+				new_ap.head_location = System::Drawing::Point(obj->Location.X + 10, obj->Location.Y + 10);
+				new_ap.arrow_location = System::Drawing::Point(obj->Location.X + obj->Width, obj->Location.Y + obj->Height);
+			}
+			else if (!current_picbox->second.w_classic)
+			{
+				new_ap.head_location = System::Drawing::Point(obj->Location.X + 10, obj->Location.Y + obj->Height);
+				new_ap.arrow_location = System::Drawing::Point(obj->Location.X + obj->Width, obj->Location.Y);
+			}
+			else if (!current_picbox->second.h_classic)
+			{
+				new_ap.head_location = System::Drawing::Point(obj->Location.X + obj->Width, obj->Location.Y + 10);
+				new_ap.arrow_location = System::Drawing::Point(obj->Location.X, obj->Location.Y + obj->Height);
 			}
 			else
 			{
-				arrows[curr].vertical_b = 0;
-				obj->Height = Cursor->Position.Y - this->Location.Y - obj->Location.Y - 25;
-				arrows[curr].vertical_a = obj->Height - 10;
+				new_ap.head_location = System::Drawing::Point(obj->Location.X + obj->Width, obj->Location.Y + obj->Height);
+				new_ap.arrow_location = System::Drawing::Point(obj->Location.X, obj->Location.Y);
 			}
+			m.lock();
+			arrows[Convert_String_to_string(obj->Name)] = new_ap;
 			m.unlock();
 		}
 	}
-
-	else if (!ab_resizing)
-	{
-		Cursor->Current = System::Windows::Forms::Cursors::Hand;
-		if (down) {
-			moving = true;
-			p.X -= fixed.X;
-			p.Y -= fixed.Y;
-			obj->Location = p;
-		}
-	}
-
 	if (obj->Name[0] == 'A' && obj->Name[1] == 'B' && down && ab_resizing) {
-		obj->ImageLocation = Convert_string_to_String(get_data_dir() + "\\out.png");
+		obj->ImageLocation = "out.png";
 	}
 }
 
 System::Void UMLCreator::Constructor::pictureBox_MouseUp(Object^ sender, MouseEventArgs^ args)
 {
 	PictureBox^ obj = safe_cast<PictureBox^>(sender);
-	if (obj->Name[0] == 'A' && obj->Name[1] == 'B' && ab_resizing) {
-		obj->ImageLocation = Convert_string_to_String(get_data_dir() + "\\out.png");
-	}
 	if (obj->Name == "arrow_sample")
 	{
 		PictureBox^ new_a_s = safe_cast<PictureBox^>(pics->Components[pics->Components->Count - 1]);
 		new_a_s->Location = obj->Location;
 		obj->Location = arrow_sample_location;
+		m.lock();
+		arrows[Convert_String_to_string(new_a_s->Name)].head_location =
+			Point(new_a_s->Location.X + new_a_s->Width, new_a_s->Location.Y + new_a_s->Height);
+		arrows[Convert_String_to_string(new_a_s->Name)].arrow_location = new_a_s->Location;
+		m.unlock();
 	}
 
+	if (obj->Name[0] == 'A' && obj->Name[1] == 'B' && ab_resizing) {
+		obj->ImageLocation = "out.png";
+	}
 	down = false;
 	ab_resizing = false;
 	moving = false;
@@ -211,6 +309,18 @@ System::Void UMLCreator::Constructor::key_press(System::Object^ sender, KeyEvent
 			System::Windows::Forms::PictureBox^ pic = gcnew System::Windows::Forms::PictureBox();
 			create_new_pic_box(pic, buffer);
 			pic->Location = Point(Cursor->Position.X, Cursor->Position.Y-32);
+			if (buffer->Name[0] == 'A' && buffer->Name[1] == 'B')
+			{
+				ArrowProperities new_ap = arrows[Convert_String_to_string(buffer->Name)];
+				new_ap.arrow_location = pic->Location;
+				if (!new_ap.w_classic && !new_ap.h_classic){new_ap.head_location = System::Drawing::Point(pic->Location.X + 10, pic->Location.Y + 10);}
+				else if (!new_ap.w_classic){new_ap.head_location = System::Drawing::Point(pic->Location.X + 10, pic->Location.Y + pic->Height);}
+				else if (!new_ap.h_classic){new_ap.head_location = System::Drawing::Point(pic->Location.X + pic->Width, pic->Location.Y + 10);}
+				else{new_ap.head_location = System::Drawing::Point(pic->Location.X + pic->Width, pic->Location.Y + pic->Height);}
+				m.lock();
+				arrows[Convert_String_to_string(pic->Name)] = new_ap;
+				m.unlock();
+			}
 			this->Controls->Add(pic);
 		}
 		else if (e->KeyCode == Keys::C && e->Modifiers == Keys::Control)
@@ -314,7 +424,7 @@ System::Void UMLCreator::Constructor::create_new_pic_box(PictureBox^ pic, Pictur
 		}
 		else{
 			m.lock();
-			arrows["AB" + std::to_string(count++)] = arrows.find(Convert_String_to_string(obj->Name))->second;
+			arrows["AB" + std::to_string(count++)] = arrows[Convert_String_to_string(obj->Name)];
 			m.unlock();
 		}
 	}

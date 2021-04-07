@@ -59,7 +59,7 @@ CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::st
 		rectangle.move(1, 1);
 
 		sf::RenderTexture renderTexture;
-		renderTexture.create(width, height);
+		renderTexture.create(width, height + 5);
 		renderTexture.draw(rectangle);
 
 		sf::Text txt;
@@ -168,28 +168,39 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 
 			if (curr_data.b == body::DOTTED_LINE)
 			{
+				float x_loc = 10;
+				if (!curr_data.w_classic) { x_loc = l_w - 10; }
 
-				for (int i = l_h - 20; i >= l_h - curr_data.vertical_a - 5; i -= 10)
+				int y_start = l_h - 20, y_finish = l_h - curr_data.vertical_a - 5;
+				if (!curr_data.h_classic) { y_start = l_h - curr_data.vertical_b - 5, y_finish = 5; }
+				for (int i = y_start; i >= y_finish; i -= 10)
 				{
 					++ver_a_counter;
 					sf::RectangleShape r_4(sf::Vector2f(1.f, float(5)));
-					r_4.move(float(10), float(i));
+					r_4.move(x_loc, float(i));
 					r_4.setFillColor(curr_data.colour);
 					rt.draw(r_4);
 				}
-				for (int i = l_h - curr_data.vertical_a - 10; i >= 5; i -= 10)
+
+				if (!curr_data.h_classic) { y_start = l_h - 20, y_finish = l_h - curr_data.vertical_b + 5; }
+				else { y_start = l_h - curr_data.vertical_a - 10, y_finish = 5; }
+
+				for (int i = y_start; i >= y_finish; i -= 10)
 				{
 					++ver_b_counter;
 					sf::RectangleShape r_3(sf::Vector2f(1.f, float(5)));
-					r_3.move(float(l_w - 10), float(i));
+					r_3.move(float(abs(l_w - x_loc)), float(i));
 					r_3.setFillColor(curr_data.colour);
 					rt.draw(r_3);
 				}
+
+				float y_point = l_h - curr_data.vertical_a - 5;
+				if (!curr_data.h_classic) { y_point = l_h - curr_data.vertical_b + 5; }
 				for (int i = l_w - 20; i >= 10; i -= 10)
 				{
 					++hor_counter;
 					sf::RectangleShape r_3(sf::Vector2f(1.f, float(5)));
-					r_3.move(float(i), float(l_h - curr_data.vertical_a - 5));
+					r_3.move(float(i), y_point);
 					r_3.rotate(270);
 					r_3.setFillColor(curr_data.colour);
 					rt.draw(r_3);
@@ -197,29 +208,40 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 			}
 			else if (curr_data.b == body::SOLID)
 			{
+				float x_loc = 10;
+				if (!curr_data.w_classic) { x_loc = l_w - 10; }
+				float y_loc = curr_data.vertical_b - 5;
+				if (!curr_data.h_classic) { y_loc = curr_data.vertical_a + 5; }
+
 				if (curr_data.horizontal > 20)
 				{
 					++hor_counter;
-					sf::RectangleShape r_4((sf::Vector2f(1.f, float(l_w - ((curr_data.h == head::ARROW || curr_data.vertical_b > 20) ? 20 : 25)))));
-					r_4.move(float(10), float(curr_data.vertical_b - 5));
+					sf::RectangleShape r_4(sf::Vector2f(1.f, float(l_w - 20)));
+					r_4.move(float(10), y_loc);
 					r_4.setFillColor(curr_data.colour);
 					r_4.rotate(270);
 					rt.draw(r_4);
 				}
 
+				if (!curr_data.h_classic) { y_loc = curr_data.vertical_a + 4; }
+				else { y_loc = (curr_data.h == head::ARROW ? 5 : 17); }
+
 				if (curr_data.vertical_b > 20)
 				{
 					++ver_b_counter;
 					sf::RectangleShape r_3(sf::Vector2f(1.f, float(curr_data.vertical_b - (curr_data.h == head::ARROW ? 10 : 22))));
-					r_3.move(float(l_w - 10), float(curr_data.h == head::ARROW ? 5 : 17));
+					r_3.move(float(abs(l_w - x_loc)), y_loc);
 					r_3.setFillColor(curr_data.colour);
 					rt.draw(r_3);
 				}
 
+				if (!curr_data.h_classic) { y_loc = 5; }
+				else { y_loc = (l_h - curr_data.vertical_a - ((curr_data.h == head::ARROW || ver_b_counter > 0 || hor_counter > 0) ? 5 : -11)); }
+
 				if (curr_data.vertical_a > 10) {
 					++ver_a_counter;
-					sf::RectangleShape r_3(sf::Vector2f(1.f, float(curr_data.vertical_a - ((curr_data.h == head::ARROW || ver_b_counter > 0 || hor_counter > 0) ? 5 : 17))));
-					r_3.move(float(10), float(l_h - curr_data.vertical_a - ((curr_data.h == head::ARROW || ver_b_counter > 0 || hor_counter > 0) ? 5 : -11)));
+					sf::RectangleShape r_3(sf::Vector2f(1.f, float(curr_data.vertical_a - ((curr_data.h == head::ARROW || ver_b_counter > 0 || hor_counter > 0) ? 0 : 12))));
+					r_3.move(x_loc, y_loc);
 					r_3.setFillColor(curr_data.colour);
 					rt.draw(r_3);
 				}
@@ -229,25 +251,38 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 				sf::RectangleShape r_1(sf::Vector2f(1.f, 5.f));
 				sf::RectangleShape r_2(sf::Vector2f(1.f, 5.f));
 
-				if (ver_b_counter > 0) {
-					r_1.move(float(l_w - 10), float(4));
-					r_1.rotate(45);
-					r_2.move(float(l_w - 10), float(4));
-					r_2.rotate(315);
+				if (ver_b_counter > 0)
+				{
+					float x_loc = l_w - 10, y_loc = 4, angle_increment = 0;
+					if (!curr_data.w_classic) { x_loc = 10; }
+					if (!curr_data.h_classic) { y_loc = l_h - 4; angle_increment = 180; x_loc += 1; }
+
+					r_1.move(x_loc, y_loc);
+					r_1.rotate(45 + angle_increment);
+					r_2.move(x_loc, y_loc);
+					r_2.rotate(315 + angle_increment);
 				}
+
 				else if (hor_counter > 0)
 				{
-					r_1.move(float(l_w - 10), float(l_h - curr_data.vertical_a - 6));
-					r_1.rotate(45);
-					r_2.move(float(l_w - 10), float(l_h - curr_data.vertical_a - 6));
-					r_2.rotate(135);
+					float x_loc = l_w - 10, y_loc = (l_h - curr_data.vertical_a - 6), angle_increment = 0;
+					if (!curr_data.h_classic) { y_loc = curr_data.vertical_a + 4; }
+					if (!curr_data.w_classic) { x_loc = 10; angle_increment = 180; y_loc += 1; }
+					r_1.move(x_loc, y_loc);
+					r_1.rotate(45 + angle_increment);
+					r_2.move(x_loc, y_loc);
+					r_2.rotate(135 + angle_increment);
 				}
+
 				else
 				{
-					r_1.move(float(10), float(0));
-					r_1.rotate(45);
-					r_2.move(float(10), float(0));
-					r_2.rotate(315);
+					float y_loc = 0, x_loc = 10, angle_increment = 0;
+					if (!curr_data.h_classic) { y_loc = curr_data.vertical_a; angle_increment = 180; x_loc += 1; }
+
+					r_1.move(x_loc, y_loc);
+					r_1.rotate(45 + angle_increment);
+					r_2.move(x_loc, y_loc);
+					r_2.rotate(315 + angle_increment);
 				}
 
 				r_1.setFillColor(curr_data.colour);
@@ -271,17 +306,26 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 
 				if (ver_b_counter > 0)
 				{
+					float x_loc = l_w - 6, y_loc = 4;
+					if (!curr_data.w_classic) { x_loc = 14; }
+					if (!curr_data.h_classic) { y_loc = l_h - 20; }
 					rhombus.rotate(90);
-					rhombus.move(float(l_w - 6), float(4));
+					rhombus.move(x_loc, y_loc);
 				}
 				else if (hor_counter > 0)
 				{
-					rhombus.move(float(l_w - 15), float(l_h - curr_data.vertical_a - 10));
+					float x_loc = l_w - 15, y_loc = l_h - curr_data.vertical_a - 10;
+					if (!curr_data.w_classic) { x_loc = 10; }
+					if (!curr_data.h_classic) { y_loc = curr_data.vertical_a; }
+
+					rhombus.move(x_loc, y_loc);
 				}
 				else
 				{
+					float y_loc = 1;
+					if (!curr_data.h_classic) { y_loc = curr_data.vertical_a - 20; }
 					rhombus.rotate(90);
-					rhombus.move(float(14), float(1));
+					rhombus.move(float(14), y_loc);
 				}
 
 				rt.draw(rhombus);
@@ -301,24 +345,32 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 
 				if (ver_b_counter > 0)
 				{
-					triangle.rotate(270);
-					triangle.move(float(l_w - 14), float(16));
+					float x_loc = l_w - 14, y_loc = 16, angle_increment = 0;
+					if (!curr_data.w_classic) { x_loc = 6; }
+					if (!curr_data.h_classic) { y_loc = l_h - 18;  angle_increment = 180; x_loc += 9; }
+					triangle.rotate(270 + angle_increment);
+					triangle.move(x_loc, y_loc);
 				}
 				else if (hor_counter > 0)
 				{
-					triangle.move(float(l_w - 15), float(l_h - curr_data.vertical_a - 10));
+					float x_loc = l_w - 15, y_loc = l_h - curr_data.vertical_a - 10;
+					if (!curr_data.h_classic) { y_loc = curr_data.vertical_a; }
+					if (!curr_data.w_classic) { x_loc = 15; triangle.rotate(180);  y_loc += 10; }
+					triangle.move(x_loc, y_loc);
 				}
 				else
 				{
-					triangle.rotate(270);
-					triangle.move(float(6), float(10));
+					float x_loc = 6, y_loc = 10, angle_increment = 0;
+					if (!curr_data.h_classic) { angle_increment = 180; x_loc = 15, y_loc = curr_data.vertical_a - 11; }
+					triangle.rotate(270 + angle_increment);
+					triangle.move(x_loc, y_loc);
 				}
 
 				rt.draw(triangle);
 			}
 
 			m.lock();
-			rt.getTexture().copyToImage().saveToFile((get_data_dir() + "\\out.png"));
+			rt.getTexture().copyToImage().saveToFile("out.png");
 			m.unlock();
 		}
 	}
