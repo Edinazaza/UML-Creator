@@ -45,10 +45,24 @@ CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::st
 {
 	if (!(name.empty() && meth.empty() && var.empty())) {
 		unsigned int width = prop.square_width;
-	/*	for (std::string& i : meth)
+
+		double line_lenght_divisor = 5.7;
+		if (prop.font_size == 10) { line_lenght_divisor = 5; }
+		if (prop.font_size == 8) { line_lenght_divisor = 3.7; }
+
+		size_t line_lenght = size_t(prop.square_width / line_lenght_divisor);
+		std::vector<std::string> new_meth;
+		for (size_t i = 0; i < meth.size(); ++i)
 		{
-			width = max(unsigned(i.size()) * 5 + 20, width);
-		}*/
+			std::string line = meth[i];
+			while (i + 1 < meth.size() && line.size() + meth[i + 1].size() <= line_lenght &&
+				meth[i + 1].find('+') == npos && meth[i + 1].find('-') == npos && meth[i + 1].find('#') == npos)
+			{
+				line += " " + meth[++i];
+			}
+			new_meth.push_back(line);
+		}
+		meth = new_meth;
 
 		const float height = ((float(meth.size()) + float(var.size())) * (14 - prop.height_decrement) + 50.f ) ;
 
@@ -59,7 +73,7 @@ CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::st
 		rectangle.move(1, 1);
 
 		sf::RenderTexture renderTexture;
-		renderTexture.create(width, height + 5);
+		renderTexture.create(width, unsigned(height + 5));
 		renderTexture.draw(rectangle);
 
 		sf::Text txt;
@@ -90,30 +104,29 @@ CreateImage(std::vector<std::string> meth, std::vector<std::string> var, std::st
 			txt.setPosition(8, space);
 			txt.setStyle(sf::Text::Regular);
 			renderTexture.draw(txt);
-			space += 14;
+			space += 14 - prop.height_decrement;
 		}
 		renderTexture.draw(txt);
 		rectangle.setSize(sf::Vector2f(float(width - 2), float(1)));
 		rectangle.setOutlineThickness(0);
 		rectangle.setFillColor(sf::Color::Black);
-		rectangle.setPosition(rectangle.getPosition().x, txt.getPosition().y + 19);
+		rectangle.setPosition(rectangle.getPosition().x, txt.getPosition().y + 19-prop.height_decrement*2);
 		renderTexture.draw(rectangle);
 		// end variable
 
 		// method
-		space += 5;
+		size_t increment = 5;
+		if (prop.font_size == 10) { increment = 6; }
+		if (prop.font_size == 8) { increment = 8; }
+		space += increment;
 		txt.setCharacterSize(prop.font_size);
 		for (size_t i = 0; i < meth.size(); ++i)
 		{
 			std::string line = meth[i];
-			while (i+1 < meth.size() && line.size() + meth[i+1].size() <= prop.str_lenght && meth[i + 1].find('+') == npos && meth[i + 1].find('-') == npos && meth[i + 1].find('#') == npos)
-			{
-				line += " " + meth[++i];
-			}
 			txt.setString(line);
 			txt.setPosition(4, space);
 			renderTexture.draw(txt);
-			space += 14;
+			space += 14 - prop.height_decrement;
 		}
 		// end method
 
@@ -169,7 +182,7 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 			if (curr_data.b == body::DOTTED_LINE)
 			{
 				float x_loc = 10;
-				if (!curr_data.w_classic) { x_loc = l_w - 10; }
+				if (!curr_data.w_classic) { x_loc = l_w - 10.f; }
 
 				int y_start = l_h - 20, y_finish = l_h - curr_data.vertical_a - 5;
 				if (!curr_data.h_classic) { y_start = l_h - curr_data.vertical_b - 5, y_finish = 5; }
@@ -194,8 +207,8 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 					rt.draw(r_3);
 				}
 
-				float y_point = l_h - curr_data.vertical_a - 5;
-				if (!curr_data.h_classic) { y_point = l_h - curr_data.vertical_b + 5; }
+				float y_point = float(l_h) - float(curr_data.vertical_a) - 5.f;
+				if (!curr_data.h_classic) { y_point = float(l_h) - curr_data.vertical_b + 5.f; }
 				for (int i = l_w - 20; i >= 10; i -= 10)
 				{
 					++hor_counter;
@@ -209,9 +222,9 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 			else if (curr_data.b == body::SOLID)
 			{
 				float x_loc = 10;
-				if (!curr_data.w_classic) { x_loc = l_w - 10; }
-				float y_loc = curr_data.vertical_b - 5;
-				if (!curr_data.h_classic) { y_loc = curr_data.vertical_a + 5; }
+				if (!curr_data.w_classic) { x_loc = float(l_w - 10); }
+				float y_loc = float(curr_data.vertical_b - 5);
+				if (!curr_data.h_classic) { y_loc = float(curr_data.vertical_a + 5); }
 
 				if (curr_data.horizontal > 20)
 				{
@@ -223,8 +236,8 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 					rt.draw(r_4);
 				}
 
-				if (!curr_data.h_classic) { y_loc = curr_data.vertical_a + 4; }
-				else { y_loc = (curr_data.h == head::ARROW ? 5 : 17); }
+				if (!curr_data.h_classic) { y_loc = float(curr_data.vertical_a + 4); }
+				else { y_loc = (curr_data.h == head::ARROW ? 5.f : 17.f); }
 
 				if (curr_data.vertical_b > 20)
 				{
@@ -236,7 +249,7 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 				}
 
 				if (!curr_data.h_classic) { y_loc = 5; }
-				else { y_loc = (l_h - curr_data.vertical_a - ((curr_data.h == head::ARROW || ver_b_counter > 0 || hor_counter > 0) ? 5 : -11)); }
+				else { y_loc = (float(l_h - curr_data.vertical_a) - ((curr_data.h == head::ARROW || ver_b_counter > 0 || hor_counter > 0) ? 5.f : -11.f)); }
 
 				if (curr_data.vertical_a > 10) {
 					++ver_a_counter;
@@ -253,9 +266,9 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 
 				if (ver_b_counter > 0)
 				{
-					float x_loc = l_w - 10, y_loc = 4, angle_increment = 0;
+					float x_loc = float(l_w - 10), y_loc = 4, angle_increment = 0;
 					if (!curr_data.w_classic) { x_loc = 10; }
-					if (!curr_data.h_classic) { y_loc = l_h - 4; angle_increment = 180; x_loc += 1; }
+					if (!curr_data.h_classic) { y_loc = float(l_h - 4); angle_increment = 180; x_loc += 1; }
 
 					r_1.move(x_loc, y_loc);
 					r_1.rotate(45 + angle_increment);
@@ -265,8 +278,8 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 
 				else if (hor_counter > 0)
 				{
-					float x_loc = l_w - 10, y_loc = (l_h - curr_data.vertical_a - 6), angle_increment = 0;
-					if (!curr_data.h_classic) { y_loc = curr_data.vertical_a + 4; }
+					float x_loc = float(l_w - 10), y_loc = float(l_h - curr_data.vertical_a - 6), angle_increment = 0;
+					if (!curr_data.h_classic) { y_loc = float(curr_data.vertical_a + 4); }
 					if (!curr_data.w_classic) { x_loc = 10; angle_increment = 180; y_loc += 1; }
 					r_1.move(x_loc, y_loc);
 					r_1.rotate(45 + angle_increment);
@@ -277,7 +290,7 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 				else
 				{
 					float y_loc = 0, x_loc = 10, angle_increment = 0;
-					if (!curr_data.h_classic) { y_loc = curr_data.vertical_a; angle_increment = 180; x_loc += 1; }
+					if (!curr_data.h_classic) { y_loc = float(curr_data.vertical_a); angle_increment = 180; x_loc += 1; }
 
 					r_1.move(x_loc, y_loc);
 					r_1.rotate(45 + angle_increment);
@@ -306,24 +319,24 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 
 				if (ver_b_counter > 0)
 				{
-					float x_loc = l_w - 6, y_loc = 4;
+					float x_loc = float(l_w - 6), y_loc = 4;
 					if (!curr_data.w_classic) { x_loc = 14; }
-					if (!curr_data.h_classic) { y_loc = l_h - 20; }
+					if (!curr_data.h_classic) { y_loc = float(l_h - 20); }
 					rhombus.rotate(90);
 					rhombus.move(x_loc, y_loc);
 				}
 				else if (hor_counter > 0)
 				{
-					float x_loc = l_w - 15, y_loc = l_h - curr_data.vertical_a - 10;
+					float x_loc = float(l_w - 15), y_loc = float(l_h - curr_data.vertical_a - 10);
 					if (!curr_data.w_classic) { x_loc = 10; }
-					if (!curr_data.h_classic) { y_loc = curr_data.vertical_a; }
+					if (!curr_data.h_classic) { y_loc = float(curr_data.vertical_a); }
 
 					rhombus.move(x_loc, y_loc);
 				}
 				else
 				{
 					float y_loc = 1;
-					if (!curr_data.h_classic) { y_loc = curr_data.vertical_a - 20; }
+					if (!curr_data.h_classic) { y_loc = float(curr_data.vertical_a - 20); }
 					rhombus.rotate(90);
 					rhombus.move(float(14), y_loc);
 				}
@@ -345,23 +358,23 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 
 				if (ver_b_counter > 0)
 				{
-					float x_loc = l_w - 14, y_loc = 16, angle_increment = 0;
+					float x_loc = float(l_w - 14), y_loc = 16, angle_increment = 0;
 					if (!curr_data.w_classic) { x_loc = 6; }
-					if (!curr_data.h_classic) { y_loc = l_h - 18;  angle_increment = 180; x_loc += 9; }
+					if (!curr_data.h_classic) { y_loc = float(l_h - 18);  angle_increment = 180; x_loc += 9; }
 					triangle.rotate(270 + angle_increment);
 					triangle.move(x_loc, y_loc);
 				}
 				else if (hor_counter > 0)
 				{
-					float x_loc = l_w - 15, y_loc = l_h - curr_data.vertical_a - 10;
-					if (!curr_data.h_classic) { y_loc = curr_data.vertical_a; }
+					float x_loc = float(l_w - 15), y_loc = float(l_h - curr_data.vertical_a - 10);
+					if (!curr_data.h_classic) { y_loc = float(curr_data.vertical_a); }
 					if (!curr_data.w_classic) { x_loc = 15; triangle.rotate(180);  y_loc += 10; }
 					triangle.move(x_loc, y_loc);
 				}
 				else
 				{
 					float x_loc = 6, y_loc = 10, angle_increment = 0;
-					if (!curr_data.h_classic) { angle_increment = 180; x_loc = 15, y_loc = curr_data.vertical_a - 11; }
+					if (!curr_data.h_classic) { angle_increment = 180; x_loc = 15, y_loc = float(curr_data.vertical_a - 11); }
 					triangle.rotate(270 + angle_increment);
 					triangle.move(x_loc, y_loc);
 				}

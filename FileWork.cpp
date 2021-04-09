@@ -31,8 +31,8 @@ std::string change_text_by_tags(std::string source, std::string new_piece, size_
     std::istringstream stream(source);
     while (std::getline(stream, line))
     {
-        if (line.find(o_tag) != std::string::npos) 
-        { 
+        if (line.find(o_tag) != std::string::npos)
+        {
             ret += new_piece + "\n";
             while (line.find(c_tag) == std::string::npos) { std::getline(stream, line); }
             std::getline(stream, line);

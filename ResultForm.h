@@ -91,6 +91,8 @@ namespace UMLCreator {
 	private: System::Windows::Forms::Button^ ccr;
 	private: System::Windows::Forms::RichTextBox^ RedactorResultForm;
 	private: System::Windows::Forms::Button^ constructor_button;
+	private: bool down = false;
+	private: bool resizing = false;
 	public: ListBox^ class_list = gcnew ListBox;
 	private: System::Windows::Forms::Button^ add_class;
 	private: System::Windows::Forms::GroupBox^ groupBox1;
@@ -139,6 +141,10 @@ namespace UMLCreator {
 			this->PictureResultForm->Size = System::Drawing::Size(469, 549);
 			this->PictureResultForm->TabIndex = 0;
 			this->PictureResultForm->TabStop = false;
+			this->PictureResultForm->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &UMLCreator::ResultForm::onPicture_Result_MouseMove);
+			this->PictureResultForm->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &UMLCreator::ResultForm::onPicture_Result_MouseDown);
+			this->PictureResultForm->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &UMLCreator::ResultForm::onPicture_Result_MouseUp);
+
 			// 
 			// DownloadResultForm
 			// 
@@ -251,7 +257,7 @@ namespace UMLCreator {
 			this->groupBox1->Size = System::Drawing::Size(94, 119);
 			this->groupBox1->TabIndex = 11;
 			this->groupBox1->TabStop = false;
-			this->groupBox1->Text = L"diagramms size";
+			this->groupBox1->Text = L"font size";
 			// 
 			// size_2_rb
 			// 
@@ -260,7 +266,7 @@ namespace UMLCreator {
 			this->size_2_rb->Name = L"size_2_rb";
 			this->size_2_rb->Size = System::Drawing::Size(42, 21);
 			this->size_2_rb->TabIndex = 1;
-			this->size_2_rb->Text = L"-1";
+			this->size_2_rb->Text = L"10";
 			this->size_2_rb->UseVisualStyleBackColor = true;
 			this->size_2_rb->CheckedChanged += gcnew System::EventHandler(this, &ResultForm::size_2_rb_CheckedChanged);
 			// 
@@ -273,7 +279,7 @@ namespace UMLCreator {
 			this->size_1_rb->Size = System::Drawing::Size(82, 21);
 			this->size_1_rb->TabIndex = 0;
 			this->size_1_rb->TabStop = true;
-			this->size_1_rb->Text = L"common";
+			this->size_1_rb->Text = L"12";
 			this->size_1_rb->UseVisualStyleBackColor = true;
 			this->size_1_rb->CheckedChanged += gcnew System::EventHandler(this, &ResultForm::size_1_rb_CheckedChanged);
 			// 
@@ -285,7 +291,7 @@ namespace UMLCreator {
 			this->size_3_rb->Size = System::Drawing::Size(42, 21);
 			this->size_3_rb->TabIndex = 2;
 			this->size_3_rb->TabStop = true;
-			this->size_3_rb->Text = L"-2";
+			this->size_3_rb->Text = L"8";
 			this->size_3_rb->UseVisualStyleBackColor = true;
 			this->size_3_rb->CheckedChanged += gcnew System::EventHandler(this, &ResultForm::size_3_rb_CheckedChanged);
 			// 
@@ -328,5 +334,9 @@ namespace UMLCreator {
 	private: System::Void size_1_rb_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void size_2_rb_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
 	private: System::Void size_3_rb_CheckedChanged(System::Object^ sender, System::EventArgs^ e);
+	private: System::Void onPicture_Result_MouseMove(Object^ sender, MouseEventArgs^ args);
+	private: System::Void onPicture_Result_MouseDown(Object^ sender, MouseEventArgs^ args);
+	private: System::Void onPicture_Result_MouseUp(Object^ sender, MouseEventArgs^ args);
+
 };
 }

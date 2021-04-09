@@ -52,8 +52,14 @@ System::Void UMLCreator::ResultForm::ChangeResultForm_Click(System::Object^ send
 		}
 	}
 	diagramm_properities dp;
-	if (this->diagramm_size == 2) { dp.font_size = 10; dp.height_decrement = 0.5; dp.str_lenght = 40; }
-	if (this->diagramm_size == 3) { dp.font_size = 8; dp.height_decrement = 3; dp.str_lenght = 60; }
+
+	std::string size = Convert_String_to_string(class_list->SelectedItem->ToString());
+	size = size.substr(size.rfind('{') + 1, size.size());
+	int Width = std::stoi(size.substr(0, size.find(',')));
+	dp.square_width = Width;
+
+	if (this->diagramm_size == 2) { dp.font_size = 10; dp.height_decrement = 1; }
+	if (this->diagramm_size == 3) { dp.font_size = 8; dp.height_decrement = 2; }
 
 	auto ret = ParserUmlAndChangeImage(counter, counter, dp);
 	this->change_class_list(ret.second, counter-1);
@@ -161,4 +167,64 @@ System::Void UMLCreator::ResultForm::size_2_rb_CheckedChanged(System::Object^ se
 System::Void UMLCreator::ResultForm::size_3_rb_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
 {
 	this->diagramm_size = 3;
+}
+
+System::Void UMLCreator::ResultForm::onPicture_Result_MouseMove(Object^ sender, MouseEventArgs^ args)
+{
+	std::string size = Convert_String_to_string(class_list->SelectedItem->ToString());
+	size = size.substr(size.rfind('{') + 1, size.size());
+	int Width = std::stoi(size.substr(0, size.find(',')));
+	int Height = std::stoi(size.substr(size.find(',') + 1, size.size()));
+
+	Point p;
+	PictureBox^ obj = safe_cast<PictureBox^>(sender);
+	p.X = Cursor->Position.X;
+	p.Y = Cursor->Position.Y;
+	p.X -= this->Location.X;
+	p.Y -= this->Location.Y;
+
+	if ((p.X > this->PictureResultForm->Location.X + Width + 3 && p.X < this->PictureResultForm->Location.X + Width + 9
+		&& p.Y > this->PictureResultForm->Location.Y && p.Y < this->PictureResultForm->Location.Y + Height) || resizing)
+	{
+		Cursor->Current = Cursors::VSplit;
+		if (down)
+		{
+			resizing = true;
+			std::string location = Convert_String_to_string(class_list->SelectedItem->ToString());
+
+			size_t space_ind = location.rfind(' ') + 1;
+			location = location.substr(space_ind, location.rfind('{') - space_ind);
+			size_t counter;
+			for (size_t i = 0; i < location.size(); ++i)
+			{
+				if (isdigit(location[i]))
+				{
+					counter = size_t(std::stoi(location.substr(i, location.rfind('.'))));
+					break;
+				}
+			}
+			diagramm_properities dp;
+			if (this->diagramm_size == 2) { dp.font_size = 10; dp.height_decrement = 0.5; dp.str_lenght = 40; }
+			if (this->diagramm_size == 3) { dp.font_size = 8; dp.height_decrement = 3; dp.str_lenght = 60; }
+			if (abs(Width - (p.X - this->PictureResultForm->Location.X)) >= 10 && 
+				p.X - this->PictureResultForm->Location.X < this->PictureResultForm->Width && p.X - this->PictureResultForm->Location.X > 252)
+			{
+				dp.square_width = p.X - this->PictureResultForm->Location.X;
+				auto ret = ParserUmlAndChangeImage(counter, counter, dp);
+				this->change_class_list(ret.second, counter - 1);
+				this->PictureResultForm->ImageLocation = Convert_string_to_String(location);
+			}
+		}
+	}
+}
+
+System::Void UMLCreator::ResultForm::onPicture_Result_MouseDown(Object^ sender, MouseEventArgs^ args)
+{
+	down = true;
+}
+
+System::Void UMLCreator::ResultForm::onPicture_Result_MouseUp(Object^ sender, MouseEventArgs^ args)
+{
+	resizing = false;
+	down = false;
 }
