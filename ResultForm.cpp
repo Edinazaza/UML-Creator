@@ -157,16 +157,19 @@ System::Void UMLCreator::ResultForm::add_class_Click(System::Object^ sender, Sys
 System::Void UMLCreator::ResultForm::size_1_rb_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
 {
 	this->diagramm_size = 1;
+	this->ChangeResultForm_Click(this, e);
 }
 
 System::Void UMLCreator::ResultForm::size_2_rb_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
 {
 	this->diagramm_size = 2;
+	this->ChangeResultForm_Click(this, e);
 }
 
 System::Void UMLCreator::ResultForm::size_3_rb_CheckedChanged(System::Object^ sender, System::EventArgs^ e)
 {
 	this->diagramm_size = 3;
+	this->ChangeResultForm_Click(this, e);
 }
 
 System::Void UMLCreator::ResultForm::onPicture_Result_MouseMove(Object^ sender, MouseEventArgs^ args)

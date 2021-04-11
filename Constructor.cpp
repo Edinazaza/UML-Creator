@@ -162,17 +162,17 @@ System::Void UMLCreator::Constructor::pictureBox_MouseMove(Object^ sender, Mouse
 			if (!current_picbox->second.w_classic && !current_picbox->second.h_classic)
 			{
 				new_ap.head_location = System::Drawing::Point(obj->Location.X + 10, obj->Location.Y + 10);
-				new_ap.arrow_location = System::Drawing::Point(obj->Location.X + obj->Width, obj->Location.Y + obj->Height);
+				new_ap.arrow_location = System::Drawing::Point(obj->Location.X + obj->Width + 9, obj->Location.Y + obj->Height + 16);
 			}
 			else if (!current_picbox->second.w_classic)
 			{
 				new_ap.head_location = System::Drawing::Point(obj->Location.X + 10, obj->Location.Y + obj->Height);
-				new_ap.arrow_location = System::Drawing::Point(obj->Location.X + obj->Width, obj->Location.Y);
+				new_ap.arrow_location = System::Drawing::Point(obj->Location.X + obj->Width + 9, obj->Location.Y);
 			}
 			else if (!current_picbox->second.h_classic)
 			{
 				new_ap.head_location = System::Drawing::Point(obj->Location.X + obj->Width, obj->Location.Y + 10);
-				new_ap.arrow_location = System::Drawing::Point(obj->Location.X, obj->Location.Y + obj->Height);
+				new_ap.arrow_location = System::Drawing::Point(obj->Location.X, obj->Location.Y + obj->Height + 16);
 			}
 			else
 			{
