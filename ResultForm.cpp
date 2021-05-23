@@ -7,7 +7,10 @@
 #include "Parser.h"
 #include "UMLParser.h"
 
-bool work = true; 
+namespace R
+{
+	bool work = true;
+}
 
 System::Void UMLCreator::ResultForm::BackResultForm_Click(System::Object^ sender, System::EventArgs^ e)
 {
@@ -93,7 +96,7 @@ System::Void UMLCreator::ResultForm::constructor_button_Click(System::Object^ se
 {
 	create_default_arrow();
 	delete this->PictureResultForm->Image;
-	UMLCreator::Constructor^ next_form = gcnew UMLCreator::Constructor(work, images_size);
+	UMLCreator::Constructor^ next_form = gcnew UMLCreator::Constructor(R::work, images_size);
 	next_form->lb->Items->AddRange(this->class_list->Items);
 	next_form->lb->Visible = true;
 	next_form->lb->Size = System::Drawing::Size(53, 121);

@@ -173,7 +173,7 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 
 			sf::RenderTexture rt;
 			rt.setSmooth(true);
-			rt.create(l_w, l_h);
+			rt.create(l_w > 20 ? l_w : 20, l_h > 12 ? l_h : 12);
 
 			size_t ver_a_counter = 0;
 			size_t ver_b_counter = 0;
@@ -383,7 +383,7 @@ void create_arrow(std::map<std::string, ArrowProperities>& arrows, std::string& 
 			}
 
 			m.lock();
-			rt.getTexture().copyToImage().saveToFile("out.png");
+			rt.getTexture().copyToImage().saveToFile(get_data_dir() + "\\out.png");
 			m.unlock();
 		}
 	}

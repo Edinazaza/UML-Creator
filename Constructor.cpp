@@ -7,10 +7,15 @@
 #include "Parser.h"
 #include "CreateImageSFML.h"
 
-std::string curr;
-std::map<std::string, ArrowProperities> arrows;
-sf::Mutex m;
-bool thread_created = false;
+namespace C
+{
+	std::string curr;
+	std::map<std::string, ArrowProperities> arrows;
+	sf::Mutex m;
+	bool thread_created = false;
+}
+
+using namespace C;
 
 System::Void UMLCreator::Constructor::pictureBox_MouseDown(Object^ sender, MouseEventArgs^ args)
 {
@@ -185,7 +190,7 @@ System::Void UMLCreator::Constructor::pictureBox_MouseMove(Object^ sender, Mouse
 		}
 	}
 	if (obj->Name[0] == 'A' && obj->Name[1] == 'B' && down && ab_resizing) {
-		obj->ImageLocation = "out.png";
+		obj->ImageLocation = Convert_string_to_String(get_data_dir() + "\\out.png");
 	}
 }
 
@@ -205,7 +210,7 @@ System::Void UMLCreator::Constructor::pictureBox_MouseUp(Object^ sender, MouseEv
 	}
 
 	if (obj->Name[0] == 'A' && obj->Name[1] == 'B' && ab_resizing) {
-		obj->ImageLocation = "out.png";
+		obj->ImageLocation = Convert_string_to_String(get_data_dir() + "\\out.png");
 	}
 	down = false;
 	ab_resizing = false;

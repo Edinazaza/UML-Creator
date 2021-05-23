@@ -60,7 +60,6 @@ bool DataCollector::Parse(std::ifstream& source)
 		if ((!type.empty() || str == class_name) && peek_res == '(') { parse_method(source, type, str, peek_res); }
 		else if (!type.empty() && (peek_res == ',' || peek_res == ';')) { parse_var_line(source, type, str, peek_res); }
 		str += peek_res;
-		//if (types.find(str) != types.end()) { type = str; str.clear(); }
 		if (str == "public" || str == "private" || str == "protected") { curr_section = str; new_char; str.clear(); }
 	}
 	return false;
